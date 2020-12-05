@@ -65,6 +65,9 @@ template <typename T> inline Catg<T>::~Catg() {
 
 template <typename T> void Catg<T>::inq(const Vec& in) {
   assert(in.size() == AAt.rows() && AAt.rows() == AAt.cols() && in.size());
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static, 1)
+#endif
   for(int i = 0; i < AAt.rows(); i ++)
     AAt.row(i) += in * in[i];
 }
@@ -85,11 +88,8 @@ template <typename T> void Catg<T>::compute() {
 
 template <typename T> inline typename Catg<T>::Mat Catg<T>::roughQR(const Mat& At) const {
   Mat Q(At.rows(), At.cols());
-  for(int i = 0; i < Q.rows(); i ++)
-    for(int j = 0; j < Q.cols(); j ++)
-      Q(i, j) = T(0);
   for(int i = 0; i < At.rows(); i ++) {
-    const Vec work(At.row(i) - Q.projectionPt(At.row(i)));
+    const auto work(At.row(i) - Q.projectionPt(At.row(i)));
     // generally, assert norm > error is needed.
     // in this case, not.
     Q.row(i) = work / sqrt(work.dot(work));

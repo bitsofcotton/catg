@@ -17,3 +17,5 @@ Categorize series of inputs into svd unitary matrices.
 If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
 So we can use right unitary matrix to categorize input, also left and singular values to categorize output.
 
+# Known bug:
+If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

@@ -61,11 +61,11 @@
 int main(int argc, const char* argv[]) {
   std::cout << std::setprecision(30);
   std::string s;
-        int  range(20);
+  int range(20);
   if(1 < argc)
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range);
-  Catg<num_t>         cat(v.size());
+  Catg<num_t>         cat;
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);

@@ -36,6 +36,7 @@ public:
   typedef SimpleVector<T> Vec;
   typedef SimpleMatrix<T> Mat;
   inline Catg();
+  inline Catg(const int& size);
   inline ~Catg();
   void inq(const Vec& in);
   void compute();
@@ -44,11 +45,21 @@ public:
   Vec lambda;
 private:
   Mat roughQR(const Mat& At) const;
-  std::vector<Mat> AAt;
+  Mat AAt;
 };
 
 template <typename T> inline Catg<T>::Catg() {
   ;
+}
+
+template <typename T> inline Catg<T>::Catg(const int& size) {
+  AAt.resize(size, size);
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static, 1)
+#endif
+  for(int i = 0; i < AAt.rows(); i ++)
+    for(int j = 0; j < AAt.cols(); j ++)
+      AAt(i, j) = T(0);
 }
 
 template <typename T> inline Catg<T>::~Catg() {
@@ -56,26 +67,17 @@ template <typename T> inline Catg<T>::~Catg() {
 }
 
 template <typename T> void Catg<T>::inq(const Vec& in) {
-  if(AAt.size())
-    assert(AAt[0].rows() == in.size() && AAt[0].cols() == in.size());
-  Mat work(in.size(), in.size());
+  assert(AAt.rows() == in.size() && AAt.cols() == in.size());
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
   for(int i = 0; i < in.size(); i ++)
-    work.row(i) = in * in[i];
-  AAt.emplace_back(work);
+    AAt.row(i) = in * in[i];
 }
 
 template <typename T> void Catg<T>::compute() {
-  assert(AAt.size());
-  static P0<T> p;
-  const auto& plast(p.omega(AAt.size()));
-        auto  work(AAt[0] * plast[0]);
-  for(int i = 1; i < AAt.size(); i ++)
-    work += AAt[i] * plast[i];
-  Left  = roughQR(work);
-  Right = Left.transpose() * work;
+  Left  = roughQR(AAt);
+  Right = Left.transpose() * AAt;
   lambda.resize(Right.rows());
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)

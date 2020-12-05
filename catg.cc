@@ -55,6 +55,8 @@
 #endif
 
 #include "simplelin.hh"
+#include "p0.hh"
+#include "decompose.hh"
 #include "catg.hh"
 
 int main(int argc, const char* argv[]) {
@@ -64,13 +66,14 @@ int main(int argc, const char* argv[]) {
   if(1 < argc)
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range);
+  Decompose<num_t>    dec(v.size());
   Catg<num_t>         cat(v.size());
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
     ins >> v[t % v.size()];
     if(! ((t ++) % v.size()) && t)
-      cat.inq(v);
+      cat.inq(dec.next(v));
   }
   cat.compute();
   std::cout << "Output(" << cat.Left.rows() << ", " << cat.Left.cols() << "): " << std::endl;

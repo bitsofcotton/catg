@@ -19,7 +19,3 @@ So we can use right unitary matrix to categorize input, also left and singular v
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.
-
-# Tips
-This program needs huge amounts of data.
-If we complement data series with few amounts, we might use p0 and their limit.

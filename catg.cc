@@ -55,7 +55,6 @@
 #endif
 
 #include "simplelin.hh"
-#include "p0.hh"
 #include "catg.hh"
 
 int main(int argc, const char* argv[]) {
@@ -80,7 +79,6 @@ int main(int argc, const char* argv[]) {
       std::cout << cat.Left(i, j) << "\t";
     std::cout << std::endl;
   }
-  std::cout << std::endl;
   std::cout << "Intensity(" << cat.lambda.size() << "): " << std::endl;
   for(int i = 0; i < cat.lambda.size(); i ++)
     std::cout << cat.lambda[i] << "\t";

@@ -45,7 +45,7 @@ public:
   Vec lambda;
 private:
   Mat roughQR(const Mat& At) const;
-  Mat AAt;
+  std::vector<Mat> AAt;
 };
 
 template <typename T> inline Catg<T>::Catg() {
@@ -53,10 +53,7 @@ template <typename T> inline Catg<T>::Catg() {
 }
 
 template <typename T> inline Catg<T>::Catg(const int& size) {
-  AAt.resize(size, size);
-  for(int i = 0; i < AAt.rows(); i ++)
-    for(int j = 0; j < AAt.cols(); j ++)
-      AAt(i, j) = T(0);
+  ;
 }
 
 template <typename T> inline Catg<T>::~Catg() {
@@ -64,17 +61,28 @@ template <typename T> inline Catg<T>::~Catg() {
 }
 
 template <typename T> void Catg<T>::inq(const Vec& in) {
-  assert(in.size() == AAt.rows() && AAt.rows() == AAt.cols() && in.size());
+  assert(AAt.size() && AAt[0].rows() == in.size() && AAt[0].cols() == in.size());
+  Mat work(in.size(), in.size());
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
-  for(int i = 0; i < AAt.rows(); i ++)
-    AAt.row(i) += in * in[i];
+  for(int i = 0; i < in.size(); i ++)
+    work.row(i) = in * in[i];
+  AAt.emplace_back(work);
 }
 
 template <typename T> void Catg<T>::compute() {
-  Left  = roughQR(AAt);
-  Right = Left.transpose() * AAt;
+  assert(AAt.size());
+  static P0<T> p;
+  const auto& plast(p.omega(AAt.size()));
+  Mat work(AAt[0].rows(), AAt[0].cols());
+  for(int i = 0; i < work.rows(); i ++)
+    for(int j = 0; j < work.cols(); j ++)
+      work(i, j) = T(0);
+  for(int i = 0; i < AAt.size(); i ++)
+    work += AAt[i] * plast[i];
+  Left  = roughQR(work);
+  Right = Left.transpose() * work;
   lambda.resize(Right.rows());
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)

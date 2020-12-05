@@ -1,8 +1,19 @@
-# catg
-categorize series of inputs into svd vector.  
-this repository is stub.
+# bitsofcotton/catg
+Categorize series of inputs into svd unitary matrices.
+
+# How to use:
+    SimpleVector<double> ins(/* some size */);
+    Catg<double> cat(ins.size());
+    ...
+      // multiple loop of ins operations.
+      cat.inq(ins);
+    cat.compute();
+    // we get : cat.Left, cat.lambda, cat.Right.
+
+# How to use (commandline):
+    ./catg <range> < data.txt
 
 # Description
 If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
-So with non constant n, series of {a_1, ..., a_n0}, {a_n1,...,a_n} we can define series of decomposition of them.  
 So we can use right unitary matrix to categorize input, also left and singular values to categorize output.
+

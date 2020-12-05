@@ -55,6 +55,7 @@
 #endif
 
 #include "simplelin.hh"
+#include "p0.hh"
 #include "catg.hh"
 
 int main(int argc, const char* argv[]) {

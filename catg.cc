@@ -65,7 +65,7 @@ int main(int argc, const char* argv[]) {
   if(1 < argc)
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range);
-  Catg<num_t>         cat;
+  Catg<num_t>         cat(v.size());
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);

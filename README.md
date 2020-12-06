@@ -1,6 +1,11 @@
 # bitsofcotton/catg
 Categorize series of inputs into svd unitary matrices.
 
+# Contexts
+There exists support vector machine and so on to categorize vector series.  
+So this is another categorizer on vector series to make them into operator.
+(I didn't searched well, so might be preceding results exists.)
+
 # How to use
     SimpleVector<double> ins(/* some size */);
     Catg<double> cat(ins.size());
@@ -15,7 +20,8 @@ Categorize series of inputs into svd unitary matrices.
 
 # Description
 If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
-So we can use right unitary matrix to categorize input, also left and singular values to categorize output.
+So we can use right unitary matrix to categorize input, also left and singular values to categorize output
+on the meaning to operation of input vectors.
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

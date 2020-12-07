@@ -20,8 +20,7 @@ So this is another categorizer on vector series to make them into operator.
 
 # Description
 If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
-Left matrix can be used to categorize input because \[a_1, ..., a_n\] = Left\*diag(&lambda;)\*Right,
-Left and Right is unitary, Right is unitary means each dimension's importance is depends on abs(&lambda;\_k).
+Right is unitary means each dimension's importance is depends on abs(&lambda;\_k).
 Each Left unitary matrix column vector means each important vector in linear space.
 
 # Known bug

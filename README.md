@@ -13,7 +13,7 @@ So this is another categorizer on vector series to make them into operator.
       // multiple loop of ins operations.
       cat.inq(ins);
     cat.compute();
-    // we get : cat.Left, cat.lambda, cat.Right.
+    // we get : cat.Left, cat.lambda.
 
 # How to use (commandline)
     ./catg <range> < data.txt

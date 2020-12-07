@@ -85,13 +85,6 @@ int main(int argc, const char* argv[]) {
   std::cout << "Intensity(" << cat.lambda.size() << "): " << std::endl;
   for(int i = 0; i < cat.lambda.size(); i ++)
     std::cout << cat.lambda[i] << "\t";
-  std::cout << std::endl;
-  std::cout << "Input(" << cat.Right.rows() << ", " << cat.Right.cols() << "): " << std::endl;
-  for(int i = 0; i < cat.Right.rows(); i ++) {
-    for(int j = 0; j < cat.Right.cols(); j ++)
-      std::cout << cat.Right(i, j) << "\t";
-    std::cout << std::endl;
-  }
   return 0;
 }
 

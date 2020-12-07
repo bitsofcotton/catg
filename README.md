@@ -21,7 +21,9 @@ So this is another categorizer on vector series to make them into operator.
 # Description
 If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
 So we can use right unitary matrix to categorize input, also left and singular values to categorize output
-on the meaning to operation of input vectors.
+on the meaning to operation of input vectors. This is because \[a_1, ..., a_n\] = Left\*diag(&lambda;)\*Right,
+Left and Right is unitary, Right is unitary means each dimension's importance is depends on abs(&lambda;\_k).
+Each Left unitary matrix column vector means each important vector in linear space.
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

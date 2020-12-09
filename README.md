@@ -29,7 +29,7 @@ If there exists pre-categorized groups, this learns their habit and (Left^t v) i
 if original {a_k} has a habit.
 Otherwise, (Left^t v) means whole {a_k} habits on their e_k, with a_k'\_l:=(Left^t a_k)\_l&lambda;\_l,
 we should solve max_(n,n_0)min_k|An-1\*n_0|\_k multiple times, this is done by max_{n,n_0}min_k|Q(diag(&lambda;')Vn-U^t1\*n_0)|\_k
-<=> max_{n,n_0}min_k|Q(n'-n_0')|\_k
+<=> max_{n,n_0}min_k|Q(n'-n_0')|\_k, but with Q, this is same as Right^t,
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

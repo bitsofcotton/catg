@@ -29,7 +29,8 @@ If there exists pre-categorized groups, this learns their habit and (Left^t v) i
 if original {a_k} has a habit.
 Otherwise, (Left^t v) means whole {a_k} habits on their e_k, so we should categorize them with the patterns on their axises.
 To do so, re calculate {a_k} with Left matrix, categorize on the distribution on axises, so this depends on {a_k'} categorizer.
-(If we categorize them only in each axises, the result can be huge enough.)
+(If we categorize them only in each axises, the result can be huge enough. But in linear categorize (no nonlinear factors),
+ we only need to place hyperplanes on {a_k'} to make max distance on the groups.)
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

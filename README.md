@@ -27,7 +27,7 @@ Each Left unitary matrix column vector means each important vector in linear spa
 With below, this catg learns {a_1, ..., a_n} habit on e_k's importance manner.
 If there exists pre-categorized groups, this learns their habit and (Left^t v) is stable for their importance
 if original {a_k} has a habit.
-Otherwise, (Left^t v) means whole {a_k} habits on their e_k, with a_k_0=(Left^t a_k), a_k'\_l:=a_k_0\_l/&lambda;\_k,
+Otherwise, (Left^t v) means whole {a_k} habits on their e_k, with a_k'\_l:=(Left^t a_k)\_l&lambda;\_k,
 we should solve max_(n,n_0)min_k|<n,a_k'>-n_0| multiple times.
 
 # Known bug

@@ -23,5 +23,11 @@ If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into lef
 Right is unitary means each dimension's importance is depends on abs(&lambda;\_k).
 Each Left unitary matrix column vector means each important vector in linear space.
 
+# General Description
+With below, this catg learns {a_1, ..., a_n} habit on e_k's importance manner.
+If there exists pre-categorized groups, this learns their habit and (Left^t v) is stable for their importance
+if original {a_k} has a habit. Otherwise,
+(Left^t v) means whole {a_k} habits on their e_k, so we should categorize with the patterns on their axises.
+
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

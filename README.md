@@ -28,7 +28,7 @@ With below, this catg learns {a_1, ..., a_n} habit on e_k's importance manner.
 If there exists pre-categorized groups, this learns their habit and (Left^t v) is stable for their importance
 if original {a_k} has a habit.
 Otherwise, (Left^t v) means whole {a_k} habits on their e_k, with a_k'\_l:=(Left^t a_k)\_l&lambda;\_l,
-we should solve max_(n,n_0)min_k|An-1\*n_0|\_k multiple times, this is done by max_{n,n_0}min_k|Q(Rn-Q^t1)\*n_0|\_k.
+we should solve max_(n,n_0)min_k|An-1\*n_0|\_k multiple times, this is done by max_{n,n_0}min_k|Q(Rn-Q^t1\*n_0)|\_k.
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.

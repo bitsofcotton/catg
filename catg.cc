@@ -67,7 +67,7 @@ int main(int argc, const char* argv[]) {
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range);
   Decompose<num_t>    dec(v.size());
-  Catg<num_t>         cat(v.size());
+  CatG<num_t>         cat(v.size());
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
@@ -76,15 +76,45 @@ int main(int argc, const char* argv[]) {
       cat.inq(dec.next(v));
   }
   cat.compute();
-  std::cout << "Output(" << cat.Left.rows() << ", " << cat.Left.cols() << "): " << std::endl;
-  for(int i = 0; i < cat.Left.rows(); i ++) {
-    for(int j = 0; j < cat.Left.cols(); j ++)
-      std::cout << cat.Left(i, j) << "\t";
+  std::cout << "Distance: " << cat.distance << std::endl;
+  std::cout << "Cut: " << std::endl;
+  for(int i = 0; i < cat.cut.size(); i ++)
+    std::cout << cat.cut[i] << "\t";
+  std::cout << std::endl;
+  Catg<num_t> c0(v.size());
+  int  t0(0);
+  auto c1(c0);
+  auto t1(t0);
+  for(int i = 0; i < cat.cache.size(); i ++) {
+    if(cat.cache[i].dot(cat.cut) < num_t(0)) {
+      c0.inq(cat.cache[i]);
+      t0 ++;
+    } else {
+      c1.inq(cat.cache[i]);
+      t1 ++;
+    }
+  }
+  std::cout << "Pair: (" << t0 << ", " << t1 << ")" << std::endl;
+  c0.compute();
+  std::cout << "Output0 (" << c0.Left.rows() << ", " << c0.Left.cols() << "): " << std::endl;
+  for(int i = 0; i < c0.Left.rows(); i ++) {
+    for(int j = 0; j < c0.Left.cols(); j ++)
+      std::cout << c0.Left(i, j) << "\t";
     std::cout << std::endl;
   }
-  std::cout << "Intensity(" << cat.lambda.size() << "): " << std::endl;
-  for(int i = 0; i < cat.lambda.size(); i ++)
-    std::cout << cat.lambda[i] << "\t";
+  std::cout << "Intensity0 (" << c0.lambda.size() << "): " << std::endl;
+  for(int i = 0; i < c0.lambda.size(); i ++)
+    std::cout << c0.lambda[i] << "\t";
+  c1.compute();
+  std::cout << "Output1 (" << c1.Left.rows() << ", " << c1.Left.cols() << "): " << std::endl;
+  for(int i = 0; i < c1.Left.rows(); i ++) {
+    for(int j = 0; j < c1.Left.cols(); j ++)
+      std::cout << c1.Left(i, j) << "\t";
+    std::cout << std::endl;
+  }
+  std::cout << "Intensity1 (" << c1.lambda.size() << "): " << std::endl;
+  for(int i = 0; i < c1.lambda.size(); i ++)
+    std::cout << c1.lambda[i] << "\t";
   return 0;
 }
 

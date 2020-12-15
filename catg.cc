@@ -86,7 +86,7 @@ int main(int argc, const char* argv[]) {
   auto c1(c0);
   auto t1(t0);
   for(int i = 0; i < cat.cache.size(); i ++) {
-    if(cat.cache[i].dot(cat.cut) < num_t(0)) {
+    if(cat.cache[i].dot(cat.cut) < cat.origin) {
       c0.inq(cat.cache[i]);
       t0 ++;
     } else {

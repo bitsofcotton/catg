@@ -4,33 +4,29 @@ Categorize series of inputs into svd unitary matrices.
 # Contexts
 There exists support vector machine and so on to categorize vector series.  
 So this is another categorizer on vector series to make them into operator.
-(I didn't searched well, so might be preceding results exists.)
+(I didn't searched well, so might be preceding results exist.)
 
 # How to use
     SimpleVector<double> ins(/* some size */);
     Catg<double> cat(ins.size());
+    CatG<double> catg(ins.size());
     ...
       // multiple loop of ins operations.
+      catg.inq(ins);
       cat.inq(ins);
-    cat.compute();
-    // we get : cat.Left, cat.lambda.
+    catg.compute(); // we get : catg.cut, catg.origin, catg.distance, catg.cat.
+    cat.compute();  // we get : cat.Left, cat.lambda.
 
 # How to use (commandline)
     ./catg <range> < data.txt
 
 # Description
-If there's a series of the vector {a_1,...,a_n}, SVD can decompose them into left and right unitary matrix.
-Right is unitary means each dimension's importance is depends on abs(&lambda;\_k).
-Each Left unitary matrix column vector means each important vector in linear space.
-
-# General Description
 From a in R^n, #{a_k} == m, with below, this catg learns {a_1, ..., a_n} habit on e_k's importance manner.
 If there exists pre-categorized groups, this learns their habit and (Left^t v) is stable for their importance
 if original {a_k} has a habit. This is done by O(mn + n^3)
 
-Otherwise, (Left^t v) means whole {a_k} habits on their e_k, with a_k'\_l:=(Left^t a_k)\_l&lambda;\_l,
-we should solve max_(n,n_0)min_k|An-1\*n_0|\_k multiple times, this is done by max_{n,n_0}min_k|Q(diag(&lambda;')Vn-U^t1\*n_0)|\_k
-<=> max_{n,n_0}min_k|Q(n'-n_0')|\_k, but with Q, this is same as Right^t and this only done by Linner. So there are done by O(mn^2).
+Otherwise, we should solve max_(n,n_0)min_k|A^t*(n+n_0*n)|\_k multiple times to crack category. This is done by O(mn^2 + n^3) with SVD and configured Linner.
 
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.
+

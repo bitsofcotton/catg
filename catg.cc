@@ -67,54 +67,63 @@ int main(int argc, const char* argv[]) {
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range);
   Decompose<num_t>    dec(v.size());
-  CatG<num_t>         cat(v.size());
+  std::vector<std::vector<SimpleVector<num_t> > > va;
+  va.resize(1, std::vector<SimpleVector<num_t> >());
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
     ins >> v[t % v.size()];
     if(! ((t ++) % v.size()) && t)
-      cat.inq(dec.next(v));
+      va[0].emplace_back(dec.next(v));
   }
-  cat.compute();
-  std::cout << "Distance: " << cat.distance << std::endl;
-  std::cout << "Cut: " << std::endl;
-  for(int i = 0; i < cat.cut.size(); i ++)
-    std::cout << cat.cut[i] << "\t";
-  std::cout << std::endl;
-  Catg<num_t> c0(v.size());
-  int  t0(0);
-  auto c1(c0);
-  auto t1(t0);
-  for(int i = 0; i < cat.cache.size(); i ++) {
-    if(cat.cache[i].dot(cat.cut) < cat.origin) {
-      c0.inq(cat.cache[i]);
-      t0 ++;
-    } else {
-      c1.inq(cat.cache[i]);
-      t1 ++;
+  t = 0;
+  num_t Mdist(0);
+  while(t < va.size()) {
+    CatG<num_t> cat(v.size());
+    for(int i = 0; i < va[t].size(); i ++)
+      cat.inq(va[t][i]);
+    std::cerr << "." << std::flush;
+    cat.compute();
+    if(! t && Mdist == num_t(0)) {
+      Mdist = cat.distance;
+      std::cout << "Distance: " << Mdist << std::endl;
     }
+    if(Mdist <= cat.distance) {
+      std::cout << "Cut (" << t << ", " << cat.distance << ")" << std::endl;
+      for(int i = 0; i < cat.cut.size(); i ++)
+        std::cout << cat.cut[i] << "\t";
+      std::cout << std::endl;
+      std::vector<SimpleVector<num_t> > left;
+      std::vector<SimpleVector<num_t> > right;
+      for(int i = 0; i < va[t].size(); i ++)
+        if(va[t][i].dot(cat.cut) < cat.origin)
+          left.emplace_back(va[t][i]);
+        else
+          right.emplace_back(va[t][i]);
+      if(left.size() && right.size()) {
+        va[t] = left;
+        va.emplace_back(right);
+      } else
+        t ++;
+    } else
+      t ++;
   }
-  std::cout << "Pair: (" << t0 << ", " << t1 << ")" << std::endl;
-  c0.compute();
-  std::cout << "Output0 (" << c0.Left.rows() << ", " << c0.Left.cols() << "): " << std::endl;
-  for(int i = 0; i < c0.Left.rows(); i ++) {
-    for(int j = 0; j < c0.Left.cols(); j ++)
-      std::cout << c0.Left(i, j) << "\t";
-    std::cout << std::endl;
+  for(int i = 0; i < va.size(); i ++) {
+    Catg<num_t> c(v.size());
+    std::cout << "Pair(" << va[i].size() << ")" << std::endl;
+    for(int j = 0; j < va[i].size(); j ++)
+      c.inq(va[i][j]);
+    c.compute();
+    std::cout << "Output" << std::endl;
+    for(int i = 0; i < c.Left.rows(); i ++) {
+      for(int j = 0; j < c.Left.cols(); j ++)
+        std::cout << c.Left(i, j) << "\t";
+    }
+    std::cout << std::endl << "Intensity" << std::endl;
+    for(int i = 0; i < c.lambda.size(); i ++)
+      std::cout << c.lambda[i] << "\t";
+     std::cout << std::endl;
   }
-  std::cout << "Intensity0 (" << c0.lambda.size() << "): " << std::endl;
-  for(int i = 0; i < c0.lambda.size(); i ++)
-    std::cout << c0.lambda[i] << "\t";
-  c1.compute();
-  std::cout << "Output1 (" << c1.Left.rows() << ", " << c1.Left.cols() << "): " << std::endl;
-  for(int i = 0; i < c1.Left.rows(); i ++) {
-    for(int j = 0; j < c1.Left.cols(); j ++)
-      std::cout << c1.Left(i, j) << "\t";
-    std::cout << std::endl;
-  }
-  std::cout << "Intensity1 (" << c1.lambda.size() << "): " << std::endl;
-  for(int i = 0; i < c1.lambda.size(); i ++)
-    std::cout << c1.lambda[i] << "\t";
   return 0;
 }
 

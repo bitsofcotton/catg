@@ -26,6 +26,8 @@ if original {a_k} has a habit. This is done by O(mn + n^3)
 Otherwise, we should solve max_(n)min_k|A^t\*n\*(1+n_0)|\_k multiple times to crack category.
 This is done by O(mn^2 + n^3) with SVD and configured Linner.
 
+This returns both specific value vector and GAN trained vector if categorize is better.
+
 # Known bug
 If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.
 

@@ -3,7 +3,7 @@ Categorize series of inputs into svd unitary matrices.
 
 # Contexts
 There exists support vector machine and so on to categorize vector series.  
-So this is another categorizer on vector series to make them into operator.
+So this is another categorizer on vector series to make them into operator.  
 (I didn't searched well, so might be preceding results exist.)
 
 # How to use
@@ -32,11 +32,11 @@ This returns both specific value vector and GAN trained vector if categorize is 
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.
 
 # Tips
-If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.
+If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.  
 Without this, if the items we have isn't clean data enough, the vector we taken is meaning-less.
 
 # General Tips 2
-If we don't have enough data, machine learning is better because they handles sparsity better.
-So the context (not the order) we input into catg is important enough because of sparsity of the problem depends and
+If we don't have enough data, machine learning is better because they handles sparsity better.  
+So the context (not the order) we input into catg is important enough, because of sparsity of the problem depends, and,
 dimension we need depends data stream size itself.  
 And, constructing context itself from raw data is hard problem enough if we don't have better amounts of data.

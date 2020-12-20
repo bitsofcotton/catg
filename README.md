@@ -38,4 +38,4 @@ If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^
 If the items we have isn't clean data enough, the vector we take is meaning-less.
 
 # General Tips 2
-The context we input into catg is important enough because of sparsity of the problem depends and dimension we need depends data stream size itself.
+The context (not the order) we input into catg is important enough because of sparsity of the problem depends and dimension we need depends data stream size itself.

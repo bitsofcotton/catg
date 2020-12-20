@@ -96,7 +96,7 @@ int main(int argc, const char* argv[]) {
       std::vector<SimpleVector<num_t> > left;
       std::vector<SimpleVector<num_t> > right;
       for(int i = 0; i < va[t].size(); i ++)
-        if(va[t][i].dot(cat.cut) < cat.origin)
+        if(va[t][i].dot(cat.cut) < num_t(0))
           left.emplace_back(va[t][i]);
         else
           right.emplace_back(va[t][i]);

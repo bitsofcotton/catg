@@ -38,4 +38,7 @@ If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^
 If the items we have isn't clean data enough, the vector we take is meaning-less.
 
 # General Tips 2
-The context (not the order) we input into catg is important enough because of sparsity of the problem depends and dimension we need depends data stream size itself. This is the similar point to machine learnings. And, constructing context from raw data is hard problem enough if we don't have better amounts of data.
+If we don't have enough data, machine learning is better because they handles sparsity better.
+So the context (not the order) we input into catg is important enough because of sparsity of the problem depends and
+dimension we need depends data stream size itself.  
+And, constructing context itself from raw data is hard problem enough if we don't have better amounts of data.

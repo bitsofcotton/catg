@@ -29,7 +29,7 @@ This is done by O(mn^2 + n^3) with SVD and configured Linner.
 This returns both specific value vector and GAN trained vector if categorize is better.
 
 # Known bug
-If input is sparse enough on rank, result will be NaN because of rough QR and lambda == 0.
+If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.
 
 # Tips
 If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.

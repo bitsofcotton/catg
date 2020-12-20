@@ -33,9 +33,7 @@ If input is sparse enough on rank, it describes better to get vectors on this, b
 
 # Tips
 If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.
-
-# General Tips
-If the items we have isn't clean data enough, the vector we take is meaning-less.
+Without this, if the items we have isn't clean data enough, the vector we taken is meaning-less.
 
 # General Tips 2
 If we don't have enough data, machine learning is better because they handles sparsity better.

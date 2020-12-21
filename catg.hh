@@ -109,7 +109,9 @@ public:
   inline CatG(const int& size);
   inline ~CatG();
   inline void inq(const Vec& in);
+  inline void inqRecur(const Vec& in);
   inline void compute();
+  inline int  lmrRecur(const Vec& in);
   Vec cut;
   T   distance;
   T   origin;
@@ -153,6 +155,19 @@ template <typename T> inline void CatG<T>::inq(const Vec& in) {
     assert(cache[0].size() == in.size());
   cache.push_back(in);;
   catg.inq(in);
+}
+
+template <typename T> inline void CatG<T>::inqRecur(const Vec& in) {
+  auto work(in);
+  for(int i = 0; i < in.size(); i ++) {
+    inq(work);
+    if(i == in.size() - 1) break;
+    auto tmp(work[0]);
+    for(int j = 1; j < work.size() - 1; j ++)
+      work[j - 1] = work[j];
+    work[work.size() - 1] = tmp;
+  }
+  return;
 }
 
 template <typename T> inline void CatG<T>::compute() {
@@ -320,6 +335,19 @@ template <typename T> inline void CatG<T>::compute() {
     ;
   }
   return;
+}
+
+template <typename T> inline int CatG<T>::lmrRecur(const Vec& in) {
+  int res(0);
+  auto work(in);
+  for(int i = 0; i < in.size(); i ++) {
+    res += in.dot(cut) < origin ? - 1 : 1;
+    auto tmp(work[0]);
+    for(int j = 1; j < work.size() - 1; j ++)
+      work[j - 1] = work[j];
+    work[work.size() - 1] = tmp;
+  }
+  return res;
 }
 
 #define _CATG_

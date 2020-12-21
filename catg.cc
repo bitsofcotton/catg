@@ -65,24 +65,28 @@ int main(int argc, const char* argv[]) {
   int range(20);
   if(1 < argc)
     range = std::atoi(argv[1]);
-  SimpleVector<num_t> v(range);
+  SimpleVector<num_t> v(range * 2);
   Decompose<num_t>    dec(v.size());
   std::vector<std::vector<SimpleVector<num_t> > > va;
   va.resize(1, std::vector<SimpleVector<num_t> >());
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
-    ins >> v[t % v.size()];
-    if(! ((t ++) % v.size()) && t)
+    ins >> v[t % range];
+    if(! ((t ++) % range) && t) {
+      for(int i = range; i < v.size(); i ++)
+        v[i] = v[v.size() - i - 1];
       va[0].emplace_back(dec.next(v));
+    }
   }
   t = 0;
   num_t Mdist(0);
   while(t < va.size()) {
     CatG<num_t> cat(v.size());
     for(int i = 0; i < va[t].size(); i ++)
-      cat.inq(va[t][i]);
+      cat.inqRecur(va[t][i]);
     std::cerr << "." << std::flush;
+    std::cerr << va[t].size() << std::endl;
     cat.compute();
     if(! t && Mdist == num_t(0)) {
       Mdist = cat.distance;
@@ -94,15 +98,28 @@ int main(int argc, const char* argv[]) {
         std::cout << cat.cut[i] << "\t";
       std::cout << std::endl;
       std::vector<SimpleVector<num_t> > left;
+      std::vector<SimpleVector<num_t> > mid;
       std::vector<SimpleVector<num_t> > right;
-      for(int i = 0; i < va[t].size(); i ++)
-        if(va[t][i].dot(cat.cut) < cat.origin)
+      for(int i = 0; i < va[t].size(); i ++) {
+        const auto score(cat.lmrRecur(va[t][i]));
+        if(score < 0)
           left.emplace_back(va[t][i]);
+        else if(! score)
+          mid.emplace_back(va[t][i]);
         else
           right.emplace_back(va[t][i]);
-      if(left.size() && right.size()) {
-        va[t] = left;
-        va.emplace_back(right);
+      }
+      int flg(0);
+      flg += left.size() ? 1 : 0;
+      flg += mid.size() ? 1 : 0;
+      flg += right.size() ? 1 : 0;
+      if(1 < flg) {
+        if(left.size()) {
+          va[t] = left;
+          if(mid.size()) va.emplace_back(mid);
+        } else
+          va[t] = mid;
+        if(right.size()) va.emplace_back(right);
       } else
         t ++;
     } else

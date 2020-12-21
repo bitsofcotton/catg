@@ -35,10 +35,8 @@ If input is sparse enough on rank, it describes better to get vectors on this, b
 If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.  
 Without this, if the items we have isn't clean data enough, the vector we taken is meaning-less.
 
+This catg needs input vector is in the same dimension if we use inqRecur and lmrRecur,
+we can interpolate this with p0 library's taylor function.
+
 # General Tips
 If we don't have enough data, machine learning is better because they handles sparsity better.  
-But with them, categorize on A^t with importance average hack a little do them,
-(With lambda, average vectors to get some linear order lambda after doing average and re-catg.)
-
-This catg needs input vector is same dimension if we use inqRecur and lmrRecur.
-We can interpolate this with p0 library's taylor function.

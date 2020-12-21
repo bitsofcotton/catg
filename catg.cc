@@ -62,8 +62,11 @@
 int main(int argc, const char* argv[]) {
   std::cout << std::setprecision(30);
   std::string s;
+  int slen(8);
   int range(20);
   if(1 < argc)
+    slen = std::atoi(argv[1]);
+  if(2 < argc)
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range * 2);
   Decompose<num_t>    dec(v.size());
@@ -82,7 +85,7 @@ int main(int argc, const char* argv[]) {
   t = 0;
   num_t Mdist(0);
   while(t < va.size()) {
-    CatG<num_t> cat(v.size());
+    CatG<num_t> cat(slen);
     for(int i = 0; i < va[t].size(); i ++)
       cat.inqRecur(va[t][i]);
     std::cerr << "." << std::flush;
@@ -101,7 +104,7 @@ int main(int argc, const char* argv[]) {
       std::vector<SimpleVector<num_t> > mid;
       std::vector<SimpleVector<num_t> > right;
       for(int i = 0; i < va[t].size(); i ++) {
-        const auto score(cat.lmrRecur(va[t][i]));
+        const auto score(cat.lmrRecur(va[t][i]).first);
         if(score < 0)
           left.emplace_back(va[t][i]);
         else if(! score)

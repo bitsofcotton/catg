@@ -39,4 +39,7 @@ Without this, if the items we have isn't clean data enough, the vector we taken 
 If we don't have enough data, machine learning is better because they handles sparsity better.  
 So the context (not the order) we input into catg is important enough, because of sparsity of the problem depends, and,
 dimension we need depends data stream size itself.  
-And, constructing context itself from raw data is hard problem enough if we don't have better amounts of data.
+
+And, constructing context itself from raw data is hard problem enough if we don't have better amounts of data.  
+But with them, categorize on A^t with importance average hack a little do them,
+(With lambda, average vectors to get some linear order lambda after doing average and re-catg.)

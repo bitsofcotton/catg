@@ -90,42 +90,49 @@ int main(int argc, const char* argv[]) {
       cat.inqRecur(va[t][i]);
     std::cerr << "." << std::flush;
     std::cerr << va[t].size() << std::endl;
-    cat.compute();
-    if(! t && Mdist == num_t(0)) {
-      Mdist = cat.distance;
-      std::cout << "Distance: " << Mdist << std::endl;
+    cat.computeRecur();
+    std::vector<std::vector<std::pair<SimpleVector<num_t>, int> > > cts;
+    cts.resize(3, std::vector<std::pair<SimpleVector<num_t>, int> >());
+    for(int i = 0; i < va[t].size(); i ++) {
+      const auto lmr(cat.lmrRecur(va[t][i]));
+      cts[lmr.first + 1].emplace_back(std::make_pair(va[t][i], lmr.second));
     }
-    if(Mdist <= cat.distance) {
-      std::cout << "Cut (" << t << ", " << cat.distance << ")" << std::endl;
-      for(int i = 0; i < cat.cut.size(); i ++)
-        std::cout << cat.cut[i] << "\t";
-      std::cout << std::endl;
-      std::vector<SimpleVector<num_t> > left;
-      std::vector<SimpleVector<num_t> > mid;
-      std::vector<SimpleVector<num_t> > right;
-      for(int i = 0; i < va[t].size(); i ++) {
-        const auto score(cat.lmrRecur(va[t][i]).first);
-        if(score < 0)
-          left.emplace_back(va[t][i]);
-        else if(! score)
-          mid.emplace_back(va[t][i]);
-        else
-          right.emplace_back(va[t][i]);
+    std::vector<std::vector<SimpleVector<num_t> > > cache;
+    cache.reserve(cts.size() * 2);
+    for(int i = 0; i < cts.size(); i ++) {
+      if(! cts[i].size()) continue;
+      CatG<num_t> cat(slen);
+      for(int j = 0; j < cts[i].size(); j ++) {
+        SimpleVector<num_t> work(cts[i][j].first.size());
+        for(int k = 0; k < work.size(); k ++)
+          work[k] = cts[i][j].first[(k + cts[i][j].second) % work.size()];
+        cat.inq(work);
       }
-      int flg(0);
-      flg += left.size() ? 1 : 0;
-      flg += mid.size() ? 1 : 0;
-      flg += right.size() ? 1 : 0;
-      if(1 < flg) {
-        if(left.size()) {
-          va[t] = left;
-          if(mid.size()) va.emplace_back(mid);
-        } else
-          va[t] = mid;
-        if(right.size()) va.emplace_back(right);
-      } else
-        t ++;
-    } else
+      cat.compute();
+      if(! t && Mdist == num_t(0)) {
+        Mdist = cat.distance;
+        std::cout << "Distance: " << Mdist << std::endl;
+      }
+      if(Mdist <= cat.distance) {
+        std::cout << "Cut (" << t << ", " << cat.distance << ")" << std::endl;
+        for(int j = 0; j < cat.cut.size(); j ++)
+          std::cout << cat.cut[j] << "\t";
+        std::cout << std::endl;
+        std::vector<SimpleVector<num_t> > left;
+        std::vector<SimpleVector<num_t> > right;
+        for(int j = 0; j < cts[i].size(); j ++)
+          if(cat.lmr(cts[i][j].first) < 0)
+            left.emplace_back(cts[i][j].first);
+          else
+            right.emplace_back(cts[i][j].first);
+        if(left.size()) cache.emplace_back(std::move(left));
+        if(right.size()) cache.emplace_back(std::move(right));
+      }
+    }
+    if(cache.size()) va[t] = std::move(cache[0]);
+    for(int i = 1; i < cache.size(); i ++)
+      va.emplace_back(std::move(cache[i]));
+    if(cache.size() <= 1)
       t ++;
   }
   for(int i = 0; i < va.size(); i ++) {

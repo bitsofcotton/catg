@@ -34,3 +34,7 @@ If input is sparse enough on rank, it describes better to get vectors on this, b
 # Tips
 If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.  
 Without this, if the items we have isn't clean data enough, the vector we taken is meaning-less.
+
+# Tips
+This only depends input dimension order and block, or, if same dimension, block condition.
+If we don't have separated input, it's hard problem to decompose them.

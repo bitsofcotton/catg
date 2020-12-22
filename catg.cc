@@ -70,8 +70,7 @@ int main(int argc, const char* argv[]) {
     range = std::atoi(argv[1]);
   SimpleVector<num_t> v(range * 2);
   Decompose<num_t>    dec(v.size());
-  std::vector<std::vector<SimpleVector<num_t> > > va;
-  va.resize(1, std::vector<SimpleVector<num_t> >());
+  std::vector<SimpleVector<num_t> > va;
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
@@ -79,76 +78,21 @@ int main(int argc, const char* argv[]) {
     if(! ((t ++) % range) && t) {
       for(int i = range; i < v.size(); i ++)
         v[i] = v[v.size() - i - 1];
-      va[0].emplace_back(dec.next(v));
+      va.emplace_back(dec.next(v));
     }
   }
-  t = 0;
-  num_t Mdist(0);
-  while(t < va.size()) {
-    CatG<num_t> cat(slen);
-    for(int i = 0; i < va[t].size(); i ++)
-      cat.inqRecur(va[t][i]);
-    std::cerr << "." << std::flush;
-    std::cerr << va[t].size() << std::endl;
-    cat.computeRecur();
-    std::vector<std::vector<std::pair<SimpleVector<num_t>, int> > > cts;
-    cts.resize(3, std::vector<std::pair<SimpleVector<num_t>, int> >());
-    for(int i = 0; i < va[t].size(); i ++) {
-      const auto lmr(cat.lmrRecur(va[t][i]));
-      cts[lmr.first + 1].emplace_back(std::make_pair(va[t][i], lmr.second));
-    }
-    std::vector<std::vector<SimpleVector<num_t> > > cache;
-    cache.reserve(cts.size() * 2);
-    for(int i = 0; i < cts.size(); i ++) {
-      if(! cts[i].size()) continue;
-      CatG<num_t> cat(slen);
-      for(int j = 0; j < cts[i].size(); j ++) {
-        SimpleVector<num_t> work(cts[i][j].first.size());
-        for(int k = 0; k < work.size(); k ++)
-          work[k] = cts[i][j].first[(k + cts[i][j].second) % work.size()];
-        cat.inq(work);
-      }
-      cat.compute();
-      if(! t && Mdist == num_t(0)) {
-        Mdist = cat.distance;
-        std::cout << "Distance: " << Mdist << std::endl;
-      }
-      if(Mdist <= cat.distance) {
-        std::cout << "Cut (" << t << ", " << cat.distance << ")" << std::endl;
-        for(int j = 0; j < cat.cut.size(); j ++)
-          std::cout << cat.cut[j] << "\t";
-        std::cout << std::endl;
-        std::vector<SimpleVector<num_t> > left;
-        std::vector<SimpleVector<num_t> > right;
-        for(int j = 0; j < cts[i].size(); j ++)
-          if(cat.lmr(cts[i][j].first) < 0)
-            left.emplace_back(cts[i][j].first);
-          else
-            right.emplace_back(cts[i][j].first);
-        if(left.size()) cache.emplace_back(std::move(left));
-        if(right.size()) cache.emplace_back(std::move(right));
-      }
-    }
-    if(cache.size()) va[t] = std::move(cache[0]);
-    for(int i = 1; i < cache.size(); i ++)
-      va.emplace_back(std::move(cache[i]));
-    if(cache.size() <= 1)
-      t ++;
-  }
-  for(int i = 0; i < va.size(); i ++) {
-    Catg<num_t> c(v.size());
-    std::cout << "Pair(" << va[i].size() << ")" << std::endl;
-    for(int j = 0; j < va[i].size(); j ++)
-      c.inq(va[i][j]);
-    c.compute();
+  const auto cg(crushNoContext<num_t>(va, slen));
+  for(int t = 0; t < cg.size(); t ++) {
+    std::cout << "Pair(" << cg[t].first.size() << ")" << std::endl;
     std::cout << "Output" << std::endl;
-    for(int i = 0; i < c.Left.rows(); i ++) {
-      for(int j = 0; j < c.Left.cols(); j ++)
-        std::cout << c.Left(i, j) << "\t";
+    for(int i = 0; i < cg[t].second.Left.rows(); i ++) {
+      for(int j = 0; j < cg[t].second.Left.cols(); j ++)
+        std::cout << cg[t].second.Left(i, j) << "\t";
+      std::cout << std::endl;
     }
     std::cout << std::endl << "Intensity" << std::endl;
-    for(int i = 0; i < c.lambda.size(); i ++)
-      std::cout << c.lambda[i] << "\t";
+    for(int i = 0; i < cg[t].second.lambda.size(); i ++)
+      std::cout << cg[t].second.lambda[i] << "\t";
      std::cout << std::endl;
   }
   return 0;

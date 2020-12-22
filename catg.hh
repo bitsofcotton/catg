@@ -433,7 +433,7 @@ template <typename T> std::vector<std::pair<std::vector<std::pair<SimpleVector<T
     std::cerr << cat.distance << std::flush;
     if(! t && Mdist == T(0))
       Mdist = cat.distance;
-    if(Mdist <= cat.distance) {
+    if(Mdist <= cat.distance && cat.cut.size()) {
       std::vector<std::pair<SimpleVector<T>, int> > left;
       std::vector<std::pair<SimpleVector<T>, int> > right;
       for(int i = 0; i < result[t].first.size(); i ++)

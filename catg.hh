@@ -414,46 +414,37 @@ template <typename T> inline std::pair<int, int> CatG<T>::lmrRecur(const Vec& in
 template <typename T> std::vector<std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> > > crush(const std::vector<SimpleVector<T> >& v, const int& cs) {
   std::vector<std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> > > result;
   if(! v.size()) return result;
-  std::vector<std::vector<std::pair<SimpleVector<T>, int > > > vv;
   int t(0);
   T   Mdist(0);
-  vv.emplace_back(std::vector<std::pair<SimpleVector<T>, int> >());
-  vv[0].reserve(v.size());
+  result.emplace_back(std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> >());
+  result[0].first.reserve(v.size());
   for(int i = 0; i < v.size(); i ++)
-    vv[0].emplace_back(std::make_pair(v[i], i));
-  while(t < vv.size()) {
-    if(! vv[t].size()) {
+    result[0].first.emplace_back(std::make_pair(v[i], i));
+  while(t < result.size()) {
+    if(! result[t].first.size()) {
       t ++;
       continue;
     }
     CatG<T> cat(cs);
-    for(int i = 0; i < vv[t].size(); i ++)
-      cat.inq(vv[t][i].first);
+    for(int i = 0; i < result[t].first.size(); i ++)
+      cat.inq(result[t].first[i].first);
     std::cerr << "." << std::flush;
     cat.compute();
     std::cerr << cat.distance << std::flush;
     if(! t && Mdist == T(0))
       Mdist = cat.distance;
     if(Mdist <= cat.distance) {
-      std::vector<std::pair<SimpleVector<num_t>, int> > left;
-      std::vector<std::pair<SimpleVector<num_t>, int> > right;
-      for(int i = 0; i < vv[t].size(); i ++)
-        (cat.lmr(vv[t][i].first) < 0 ? left : right).emplace_back(vv[t][i]);
+      std::vector<std::pair<SimpleVector<T>, int> > left;
+      std::vector<std::pair<SimpleVector<T>, int> > right;
+      for(int i = 0; i < result[t].first.size(); i ++)
+        (cat.lmr(result[t].first[i].first) < 0 ? left : right).emplace_back(result[t].first[i]);
       if(left.size() && right.size()) {
-        vv[t] = std::move(left);
-        vv.emplace_back(std::move(right));
+        result[t] = std::make_pair(std::move(left), cat.catg);
+        result.emplace_back(std::make_pair(std::move(right), cat.catg));
       } else
         t ++;
     } else
       t ++;
-  }
-  result.reserve(vv.size());
-  for(int i = 0; i < vv.size(); i ++) {
-    Catg<T> cat;
-    for(int j = 0; j < vv[i].size(); j ++)
-      cat.inq(vv[i][j].first);
-    cat.compute();
-    result.emplace_back(std::make_pair(std::move(vv[i]), std::move(cat)));
   }
   return result;
 }
@@ -528,13 +519,8 @@ template <typename T> std::vector<std::pair<std::vector<std::pair<std::pair<Simp
       t ++;
   }
   result.reserve(vv.size());
-  for(int i = 0; i < vv.size(); i ++) {
-    Catg<T> cat;
-    for(int j = 0; j < vv[i].size(); j ++)
-      cat.inq(vv[i][j].first.first);
-    cat.compute();
-    result.emplace_back(std::make_pair(std::move(vv[i]), std::move(cat)));
-  }
+  for(int i = 0; i < vv.size(); i ++)
+    result.emplace_back(std::make_pair(std::move(vv[i]), Catg<T>()));
   return result;
 }
 

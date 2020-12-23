@@ -93,7 +93,7 @@ int main(int argc, const char* argv[]) {
     std::cout << std::endl << "Intensity" << std::endl;
     for(int i = 0; i < cg[t].second.lambda.size(); i ++)
       std::cout << cg[t].second.lambda[i] << "\t";
-     std::cout << std::endl;
+    std::cout << std::endl;
   }
   return 0;
 }

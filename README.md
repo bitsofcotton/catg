@@ -28,6 +28,7 @@ If there exists pre-categorized groups, this learns their habit and (Left^t v) i
 if original {a_k} has a habit.
 
 Otherwise, we should solve max_(n) exists n_0 min_k|A^t\*n+1\*n_0|\_k / ||n|| multiple times to crack category.
+(once |A^t\*n+1\*n_0|\_k into Linner solves vector, from somehow, n_0 can be scaled as the same vector n.)
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.
@@ -37,8 +38,8 @@ This shouldn't happen if no context option is supposed (recur option).
 If we want some clusters larger than t items, it costs at most O(t\*m\*n^2+t\*n^3) because we eliminate one by one.  
 Without this, if the items we have isn't clean data enough, the vector we take has mis-separated vectors.
 
-# Tips
-This only depends input dimension order and block, or, if the same dimension we have all, block condition.
+This catg only depends input dimension order and block, or, if the same dimension we have all, block condition.
+
 If we don't have separated input (no block condition), sorting can make one of the result that we suppose structure that we can't easily find in raw.
 Otherwise, converting stream into randtools format with a\_{k+1}=A\_k\*2^(a\_k) on each dimensions and if we are lucky, A is block diagonal,
-we can separate conditions, but, their condition is too huge to solve.
+we can separate conditions, but, their condition is too huge to solve over 16 bit width on modern PCs.

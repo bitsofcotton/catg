@@ -28,6 +28,7 @@ If there exists pre-categorized groups, this learns their habit and (Left^t v) i
 if original {a_k} has a habit.
 
 Otherwise, we should solve max_(n) exists n_0 min_k|A^t\*n+1\*n_0|\_k / ||n|| multiple times to crack category.
+(once |A^t\*n+1\*n_0|\_k into Linner solves vector, from somehow, n_0 can be scaled as the same vector n.)
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.

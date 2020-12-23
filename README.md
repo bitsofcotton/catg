@@ -3,8 +3,7 @@ Categorize series of inputs into svd unitary matrices.
 
 # Contexts
 There exists support vector machine and so on to categorize vector series.  
-So this is another categorizer on vector series if origin point has important meaning (no kernel trick).
-(I didn't searched well, so might be preceding results exist.)
+So this is another categorizer on vector series. (I didn't searched well, so might be preceding results exist.)
 
 # How to use
     std::vector<SimpleVector<double> > in;
@@ -28,7 +27,7 @@ From #{a_k subset R^n} == m, with below, this catg learns {a_1, ..., a_m} habit 
 If there exists pre-categorized groups, this learns their habit and (Left^t v) is stable for their importance
 if original {a_k} has a habit.
 
-Otherwise, we should solve max_(n)min_k|A^t\*n\*(1+n_0)|\_k / ||n|| multiple times to crack category.
+Otherwise, we should solve max_(n) exists n_0 min_k|A^t\*n+1\*n_0|\_k / ||n|| multiple times to crack category.
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.

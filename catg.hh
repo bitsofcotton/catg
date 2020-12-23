@@ -241,7 +241,7 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
   for(auto ratio0(lasterr / T(2));
            threshold_inner <= ratio0;
            ratio0 /= T(2)) {
-    const auto ratio(lasterr - ratio0);
+    const auto ratio(lasterr -= ratio0);
     int n_fixed;
     T   ratiob;
     T   normb0;
@@ -280,7 +280,7 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
 #endif
       for(int j = 0; j < Pverb.cols(); j ++) {
         norm[j]    = sqrt(Pverb.col(j).dot(Pverb.col(j)));
-        norm2[j]   = (j & 1 ? - norm[j] : norm[j]) + ratio;
+        norm2[j]   = (j & 1 ? - ratio : ratio) + norm[j];
         checked[j] = fix[j] || norm[j] <= threshold_p0;
       }
       auto mb(mbb + norm2 * normb0 * ratio);
@@ -338,7 +338,7 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
         if(fix[i]) {
           const auto lratio(sqrt(Pt.col(i).dot(Pt.col(i)) + b[i] * b[i]));
           F.row(j) = Pt.col(i) / lratio;
-          f[j]     = b[i]      / lratio + ratio * ratio;
+          f[j]     = (b[i] + ratio) / lratio * ratio;
           j ++;
         }
       assert(j == f.size());

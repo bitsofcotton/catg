@@ -7,15 +7,17 @@ So this is another categorizer on vector series to make them into operator.
 (I didn't searched well, so might be preceding results exist.)
 
 # How to use
-    SimpleVector<double> ins(/* some size */);
-    CatG<double> catg(ins.size());
+    std::vector<SimpleVector<double> > in;
     ...
       // multiple loop of ins operations.
-      catg.inq(ins);
-      // or we can use: catg.inqRecur(ins);
-    catg.compute(); // we get : catg.cut, catg.origin, catg.distance, catg.cat.
-                    //   catg.cat : catg.cat.Left, catg.cat.lambda.
-                    // we can use: catg.lmrRecur(ins);
+      in.emplace_back(SimpleVector<double>(/* some size */));
+      // in[in.size() - 1] operations.
+    const auto cg(crushNoContext<double>(in, /* some size */));
+    // cg[/* index */].first[/* index */].first.first  : learned vector itself.
+    // cg[/* index */].first[/* index */].first.second : dimension shift number.
+    // cg[/* index */].first[/* index */].second : in[/* here */].
+    // cg[/* index */].second : Catg<double> learned manner.
+    // Catg<double> has catg.Left, catg.lambda
 
 # How to use (commandline)
     ./catg <range> < data.txt

@@ -1,5 +1,5 @@
 # bitsofcotton/catg
-Categorize series of inputs into svd unitary matrices.
+Categorize series of inputs into rough QR unitary matrices.
 
 # Contexts
 There exists support vector machine and so on to categorize vector series.  
@@ -16,7 +16,7 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
     // cg[/* index */].first[/* index */].first.second : dimension shift number.
     // cg[/* index */].first[/* index */].second : in[/* here */].
     // cg[/* index */].second : Catg<double> learned manner.
-    // Catg<double> has catg.Left, catg.lambda
+    // Catg<double> has catg.Left, catg.R
 
 # How to use (commandline)
     ./catg <range> < data.txt
@@ -31,7 +31,7 @@ Otherwise, we should solve max_(n) exists n_0 min_k|A^t\*n+1\*n_0|\_k / ||n|| mu
 (once |A^t\*n+1\*n_0|\_k into Linner solves vector, from somehow, n_0 can be scaled as the same vector n.)
 
 # Known bug
-If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and lambda == 0.
+If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and det(R) == 0.
 This shouldn't happen if no context option is supposed (recur option).
 
 If the items we have isn't clean data enough, the vector we take has mis-separated vectors.

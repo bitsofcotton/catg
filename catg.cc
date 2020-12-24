@@ -90,9 +90,12 @@ int main(int argc, const char* argv[]) {
         std::cout << cg[t].second.Left(i, j) << "\t";
       std::cout << std::endl;
     }
-    std::cout << std::endl << "Intensity" << std::endl;
-    for(int i = 0; i < cg[t].second.lambda.size(); i ++)
-      std::cout << cg[t].second.lambda[i] << "\t";
+    std::cout << std::endl << "R:" << std::endl;
+    for(int i = 0; i < cg[t].second.R.rows(); i ++) {
+      for(int j = 0; j < cg[t].second.R.cols(); j ++)
+        std::cout << cg[t].second.R(i, j) << "\t";
+      std::cout << std::endl;
+    }
     std::cout << std::endl;
   }
   return 0;

@@ -41,7 +41,7 @@ public:
   inline void compute();
   Mat R;
 private:
-  std::vector<Vec*> cache;
+  std::vector<Vec> cache;
 };
 
 template <typename T> inline Catg<T>::Catg() {
@@ -53,14 +53,14 @@ template <typename T> inline Catg<T>::~Catg() {
 }
 
 template <typename T> inline void Catg<T>::inq(const Vec& in) {
-  if(cache.size()) assert(in.size() == cache[0]->size());
-  cache.emplace_back(&const_cast<Vec&>(in));
+  if(cache.size()) assert(in.size() == cache[0].size());
+  cache.emplace_back(in);
 }
 
 template <typename T> inline void Catg<T>::compute() {
-  Mat At(cache[0]->size(), cache.size());
+  Mat At(cache[0].size(), cache.size());
   for(int i = 0; i < At.cols(); i ++)
-    At.setCol(i, * cache[i]);
+    At.setCol(i, cache[i]);
   Mat Q(At.rows(), At.cols());
   for(int i = 0; i < Q.rows(); i ++)
     for(int j = 0; j < Q.cols(); j ++)
@@ -124,6 +124,7 @@ template <typename T> inline CatG<T>::CatG(const int& size) {
   threshold_feas  = pow(epsilon, T(5) / T(6));
   threshold_p0    = pow(epsilon, T(4) / T(6));
   threshold_inner = pow(epsilon, T(2) / T(6));
+  this->size = size;
 }
 
 template <typename T> inline CatG<T>::~CatG() {
@@ -143,17 +144,16 @@ template <typename T> const vector<typename CatG<T>::Vec>& CatG<T>::tayl(const i
 }
 
 template <typename T> inline void CatG<T>::inq(const Vec& in) {
-  if(in.size() == size) {
+  if(in.size() == size)
     cache.push_back(in);
-    catg.inq(in);
-  } else {
+  else {
     const auto& t(tayl(in.size()));
     Vec work(size);
     for(int i = 0; i < work.size(); i ++)
       work[i] = t[i].dot(in);
     cache.push_back(work);
-    catg.inq(work);
   }
+  catg.inq(cache[cache.size() - 1]);
   return;
 }
 

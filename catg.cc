@@ -84,12 +84,6 @@ int main(int argc, const char* argv[]) {
   const auto cg(crushNoContext<num_t>(va, slen));
   for(int t = 0; t < cg.size(); t ++) {
     std::cout << "Pair(" << cg[t].first.size() << ")" << std::endl;
-    std::cout << "Output" << std::endl;
-    for(int i = 0; i < cg[t].second.Left.rows(); i ++) {
-      for(int j = 0; j < cg[t].second.Left.cols(); j ++)
-        std::cout << cg[t].second.Left(i, j) << "\t";
-      std::cout << std::endl;
-    }
     std::cout << std::endl << "R:" << std::endl;
     for(int i = 0; i < cg[t].second.R.rows(); i ++) {
       for(int j = 0; j < cg[t].second.R.cols(); j ++)

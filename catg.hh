@@ -143,17 +143,16 @@ template <typename T> const vector<typename CatG<T>::Vec>& CatG<T>::tayl(const i
 }
 
 template <typename T> inline void CatG<T>::inq(const Vec& in) {
-  if(in.size() == size) {
+  if(in.size() == size)
     cache.push_back(in);
-    catg.inq(in);
-  } else {
+  else {
     const auto& t(tayl(in.size()));
     Vec work(size);
     for(int i = 0; i < work.size(); i ++)
       work[i] = t[i].dot(in);
     cache.push_back(work);
-    catg.inq(work);
   }
+  catg.inq(cache[cache.size() - 1]);
   return;
 }
 

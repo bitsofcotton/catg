@@ -43,4 +43,7 @@ This shouldn't happen if no context option is supposed (recur option).
 If the items we have isn't clean data enough, the vector we take has mis-separated vectors.
 
 # Tips
-This catg only depends input dimension order and block condition. We can't avoid block condition without some other algorithms.
+This catg only depends input dimension order and block condition. We can't avoid block condition without some other algorithms nor hypothesis.
+
+# Archive
+This repository is archived, so without bugreport, will no change.

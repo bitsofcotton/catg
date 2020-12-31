@@ -43,9 +43,4 @@ This shouldn't happen if no context option is supposed (recur option).
 If the items we have isn't clean data enough, the vector we take has mis-separated vectors.
 
 # Tips
-This catg only depends input dimension order and block condition.
-
-If we don't have separated input (no block condition), sorting can make one of the result what we suppose structure that we can't easily find in raw data stream.
-
-Otherwise, converting stream into randtools format with a\_{k+1}=A\_k\*2^(a\_k) on each dimensions and if we are lucky, A is block diagonal,
-we can separate conditions, but, their condition is too huge to solve over 16 bit width on modern PCs.
+This catg only depends input dimension order and block condition. We can't avoid block condition without some other algorithms.

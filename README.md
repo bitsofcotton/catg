@@ -16,7 +16,13 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
     // cg[/* index */].first[/* index */].first.second : dimension shift number.
     // cg[/* index */].first[/* index */].second : in[/* here */].
     // cg[/* index */].second : Catg<double> learned manner.
-    // Catg<double> has catg.R.
+    //
+    const auto g(crush<double>(in, /* some size */));
+    // g[/* index */].first[/* index */].first  : learned vector itself.
+    // g[/* index */].first[/* index */].second : in[/* here */].
+    // g[/* index */].second : Catg<double> learned manner.
+    //
+    // Catg<double> has catg.R
 
 # How to use (commandline)
     ./catg <status dimension> <vector block size> < data.txt

@@ -45,5 +45,10 @@ If the items we have isn't clean data enough, the vector we take has mis-separat
 # Tips
 This catg only depends input dimension order and block condition. We can't avoid block condition without some other algorithms nor hypothesis.
 
+# Another Download Sites
+* https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing
+* https://1drv.ms/u/s!AnqkwcwMjB_PaDIfXya_M3-aLXw?e=qzfKcU
+* https://ja.osdn.net/projects/decompose/
+
 # Archive
 This repository is archived, so without bugreport, will no change.

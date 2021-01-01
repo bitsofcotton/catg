@@ -48,7 +48,7 @@ This catg only depends input dimension order and block condition. We can't avoid
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing
 * https://1drv.ms/u/s!AnqkwcwMjB_PaDIfXya_M3-aLXw?e=qzfKcU
-* https://ja.osdn.net/projects/decompose/
+* https://ja.osdn.net/users/bitsofcotton/
 
 # Archive
 This repository is archived, so without bugreport, will no change.

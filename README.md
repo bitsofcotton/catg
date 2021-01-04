@@ -11,18 +11,19 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
       // multiple loop of ins operations.
       in.emplace_back(SimpleVector<double>(/* some size */));
       // in[in.size() - 1] operations.
-    const auto cg(crushNoContext<double>(in, /* some size */));
+    const auto cg(crushNoContext<double>(in, /* some size */, /* cut intensity */));
     // cg[/* index */].first[/* index */].first.first  : learned vector itself.
     // cg[/* index */].first[/* index */].first.second : dimension shift number.
     // cg[/* index */].first[/* index */].second : in[/* here */].
     // cg[/* index */].second : Catg<double> learned manner.
     //
-    const auto g(crush<double>(in, /* some size */));
+    const auto g(crush<double>(in, /* some size */, /* cut intensity */));
     // g[/* index */].first[/* index */].first  : learned vector itself.
     // g[/* index */].first[/* index */].second : in[/* here */].
     // g[/* index */].second : Catg<double> learned manner.
     //
     // Catg<double> has catg.R
+    // if cut intensity < 0, it's adjusted to first crush result ratio with abs(cut intensity).
 
 # How to use (commandline)
     ./catg <status dimension> <vector block size> < data.txt

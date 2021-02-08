@@ -62,12 +62,15 @@
 int main(int argc, const char* argv[]) {
   std::cout << std::setprecision(30);
   std::string s;
-  int slen(8);
-  int range(20);
+  int  slen(8);
+  int  range(20);
+  auto intensity(- num_t(1) / num_t(2));
   if(1 < argc)
     slen = std::atoi(argv[1]);
   if(2 < argc)
-    range = std::atoi(argv[1]);
+    range = std::atoi(argv[2]);
+  if(3 < argc)
+    intensity = std::atof(argv[3]);
   SimpleVector<num_t> v(range * 2);
   Decompose<num_t>    dec(v.size());
   std::vector<SimpleVector<num_t> > va;
@@ -78,10 +81,11 @@ int main(int argc, const char* argv[]) {
     if(! ((t ++) % range) && t) {
       for(int i = range; i < v.size(); i ++)
         v[i] = v[v.size() - i - 1];
-      va.emplace_back(dec.next(v));
+      //va.emplace_back(dec.next(v));
+      va.emplace_back(v);
     }
   }
-  const auto cg(crushNoContext<num_t>(va, slen));
+  const auto cg(crushNoContext<num_t>(va, slen, intensity));
   for(int t = 0; t < cg.size(); t ++) {
     std::cout << "Pair(" << cg[t].first.size() << ")" << ", R: " << std::endl;
     for(int i = 0; i < cg[t].second.R.rows(); i ++) {

@@ -203,7 +203,7 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
   cut      = Vec();
   const auto block(recur ? size * 2 : 2);
   // from bitsofcotton/p1/p1.hh
-  for(auto ratio0(0);
+  for(auto ratio0(threshold_inner);
            ratio0 <= T(1) / threshold_inner;
            ratio0 *= T(2)) {
     const auto ratio(lasterr + ratio0);

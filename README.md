@@ -35,6 +35,7 @@ If there exists pre-categorized groups, this learns their habit and (R^{-1} v) i
 if original {a_k} has a habit.
 
 Otherwise, we should solve max_k exists n |Pn|/||n|| \>= 1\*k multiple times to crack category, but this is not the optimal condition.
+(optimal condition is described as |(P-\[b,...b\]^t)n|/||n|| == |Pn-1&alpha;| / ||n||.)
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and det(R) == 0.

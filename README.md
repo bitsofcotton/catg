@@ -34,7 +34,7 @@ From #{a_k subset R^n} == m, with below, this catg learns {a_1, ..., a_m} habit 
 If there exists pre-categorized groups, this learns their habit and (R^{-1} v) is stable for their importance
 if original {a_k} has a habit.
 
-Otherwise, we should solve max_k exists n, n_0 |Pn/||n||+1\*n_0| \>= 1\*k multiple times to crack category.
+Otherwise, we should solve max_k exists n |Pn|/||n|| \>= 1\*k multiple times to crack category, but this is not the optimal condition.
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and det(R) == 0.

@@ -186,12 +186,12 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
     const auto pp(catg.R.solve(cache[i]));
     Pt.setCol(2 * i,       pp);
     Pt.setCol(2 * i + 1, - pp);
-    norm[2 * i]       = T(0);
-    norm[2 * i + 1]   = T(0);
-    one[2 * i]     = T(1);
-    one[2 * i + 1] = T(1);
-    fix[2 * i]     = 0;
-    fix[2 * i + 1] = 0;
+    norm[2 * i]     = T(0);
+    norm[2 * i + 1] = T(0);
+    one[2 * i]      = T(1);
+    one[2 * i + 1]  = T(1);
+    fix[2 * i]      = 0;
+    fix[2 * i + 1]  = 0;
   }
   auto checked(fix);
   Mat  F(Pt.rows(), Pt.rows());
@@ -205,7 +205,7 @@ template <typename T> inline void CatG<T>::compute(const bool& recur) {
   // from bitsofcotton/p1/p1.hh
   for(auto ratio0(0);
            ratio0 <= T(1) / threshold_inner;
-           ratio0 /= T(2)) {
+           ratio0 *= T(2)) {
     const auto ratio(lasterr + ratio0);
     int n_fixed;
     T   ratiob;

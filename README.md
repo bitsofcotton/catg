@@ -34,8 +34,7 @@ From #{a_k subset R^n} == m, with below, this catg learns {a_1, ..., a_m} habit 
 If there exists pre-categorized groups, this learns their habit and (R^{-1} v) is stable for their importance
 if original {a_k} has a habit.
 
-Otherwise, we should solve max_k exists n |Pn|/||n|| \>= 1\*k multiple times to crack category, but this is not the optimal condition.
-(optimal condition is described as |(P-\[b,...b\]^t)n|/||n|| == |Pn-1&alpha;| / ||n||.)
+Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||n|| multiple times to crack category.
 
 # Known bug
 If input is sparse enough on rank, it describes better to get vectors on this, but result will be NaN because of rough QR and det(R) == 0.
@@ -53,3 +52,4 @@ This catg only depends input dimension order and block condition. We can't avoid
 
 # Archive
 This repository is archived, so without bugreport, will no change.
+

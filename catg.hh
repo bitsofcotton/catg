@@ -150,7 +150,7 @@ template <typename T> inline void CatG<T>::inq(const Vec& in, const bool& comput
       work[i] = t[i].dot(in);
   }
   if(computer) {
-    T pd(1);
+    T pd(0);
     for(int i = 0; i < work.size(); i ++)
       pd += log(abs(work[i]));
     cache.emplace_back(work * exp(- pd / T(work.size())));
@@ -166,10 +166,8 @@ template <typename T> inline void CatG<T>::inqRecur(const Vec& in, const bool& c
   for(int i = 0; i < in.size(); i ++) {
     inq(work, computer);
     if(i == in.size() - 1) break;
-    auto tmp(work[0]);
-    for(int j = 0; j < work.size() - 1; j ++)
-      work[j] = work[j + 1];
-    work[work.size() - 1] = tmp;
+    for(int j = 0; j < work.size(); j ++)
+      work[j] = in[(j + i * size / in.size()) % in.size()];
   }
   return;
 }
@@ -300,7 +298,7 @@ template <typename T> inline T CatG<T>::lmrS(const Vec& in, const bool& computer
       work[i] = t[i].dot(in);
   }
   if(computer) {
-    T pd(1);
+    T pd(0);
     for(int i = 0; i < work.size(); i ++)
       pd += log(abs(work[i]));
     return work.dot(cut) * exp(- pd / T(work.size())) - origin;

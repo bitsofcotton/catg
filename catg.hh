@@ -153,7 +153,10 @@ template <typename T> inline void CatG<T>::inq(const Vec& in, const bool& comput
     T pd(0);
     for(int i = 0; i < work.size(); i ++)
       pd += log(abs(work[i]));
-    cache.emplace_back(work * exp(- pd / T(work.size())));
+    pd = exp(- pd / T(work.size()));
+    for(int i = 0; i < work.size(); i ++)
+      work[i] = pd / work[i];
+    cache.emplace_back(work);
   } else
     cache.emplace_back(work);
   assert(isfinite(cache[cache.size() - 1][0]));
@@ -301,7 +304,10 @@ template <typename T> inline T CatG<T>::lmrS(const Vec& in, const bool& computer
     T pd(0);
     for(int i = 0; i < work.size(); i ++)
       pd += log(abs(work[i]));
-    return work.dot(cut) * exp(- pd / T(work.size())) - origin;
+    pd = exp(- pd / T(work.size()));
+    for(int i = 0; i < work.size(); i ++)
+      work[i] = pd / work[i];
+    return work.dot(cut) - origin;
   }
   return work.dot(cut) - origin;
 }

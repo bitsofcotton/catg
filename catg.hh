@@ -506,7 +506,7 @@ template <typename T> inline T P012L<T>::next(const T& in) {
     work[(t - 1) % work.size()] = in;
     return in;
   }
-  const auto v(dec.next(work));
+  const auto v(dec.mother(work));
   cache.emplace_back(v / sqrt(v.dot(v)));
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
@@ -531,7 +531,7 @@ template <typename T> inline T P012L<T>::next(const T& in) {
   T res(0);
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
-    const auto  vdp(dec.next(work).dot(p));
+    const auto  vdp(dec.mother(work).dot(p));
     const auto  last(p[p.size() - 1] - p[p.size() - 2]);
     if(! isfinite(vdp)) continue;
     if(MM <= abs(vdp) && last != T(0)) {

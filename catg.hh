@@ -473,14 +473,13 @@ template <typename T> std::vector<std::pair<std::vector<std::pair<std::pair<Simp
 }
 
 
-template <typename T> class P012L {
+template <typename T, bool dec = true> class P012L {
 public:
   typedef SimpleVector<T> Vec;
   inline P012L();
   inline P012L(const int& d, const int& stat, const int& slide, const T& intensity = - T(1) / T(2));
   inline ~P012L();
   inline T next(const T& in);
-  inline T lastAvg() const;
 private:
   std::vector<Vec> cache;
   std::vector<Vec> pp;
@@ -491,11 +490,11 @@ private:
   int t;
 };
 
-template <typename T> inline P012L<T>::P012L() {
+template <typename T, bool dec> inline P012L<T,dec>::P012L() {
   t = stat = slide = 0;
 }
 
-template <typename T> inline P012L<T>::P012L(const int& d, const int& stat, const int& slide, const T& intensity) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat, const int& slide, const T& intensity) {
   work.resize(d);
   cache.reserve(stat);
   this->stat  = stat;
@@ -504,19 +503,27 @@ template <typename T> inline P012L<T>::P012L(const int& d, const int& stat, cons
   t = 0;
 }
 
-template <typename T> inline P012L<T>::~P012L() {
+template <typename T, bool dec> inline P012L<T,dec>::~P012L() {
   ;
 }
 
-template <typename T> inline T P012L<T>::next(const T& in) {
-  // XXX:
-  static Decompose<T> dec(work.size());
+template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
+  static std::vector<Decompose<T> > decompose;
+  static std::vector<bool> isinit;
+  if(dec && decompose.size() <= work.size()) {
+    decompose.resize(work.size() + 1, Decompose<T>());
+    isinit.resize(decompose.size(), false);
+  }
+  if(dec && ! isinit[work.size()]) {
+    decompose[work.size()] = Decompose<T>(work.size());
+    isinit[work.size()] = true;
+  }
   work[work.size() - 1] = in;
   if(t ++ < work.size() - 1) {
     work[(t - 1) % work.size()] = in;
     return in;
   }
-  cache.emplace_back(dec.mother(work));
+  cache.emplace_back(dec ? decompose[work.size()].mother(work) : work);
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
   work[work.size() - 2] = in;
@@ -540,7 +547,7 @@ template <typename T> inline T P012L<T>::next(const T& in) {
   T res(0);
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
-    const auto  vdp(dec.mother(work).dot(p));
+    const auto  vdp((dec ? decompose[work.size()].mother(work) : work).dot(p));
     const auto  last(p[p.size() - 1] - p[p.size() - 2]);
     if(! isfinite(vdp)) continue;
     if(MM <= abs(vdp) && last != T(0)) {
@@ -549,13 +556,6 @@ template <typename T> inline T P012L<T>::next(const T& in) {
     }
   }
   return in + res;
-}
-
-template <typename T> inline T P012L<T>::lastAvg() const{
-  T la(0);
-  for(int i = 0; i < cache.size(); i ++)
-    la += abs(cache[i][cache[i].size() - 1] - cache[i][cache[i].size() - 2]);
-  return la /= T(cache.size());
 }
 
 #define _CATG_

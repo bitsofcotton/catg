@@ -65,7 +65,7 @@ int main(int argc, const char* argv[]) {
   int  slen(8);
   int  range(20);
   auto intensity(- num_t(1) / num_t(2));
-  int  computer(0);
+  int  computer(20);
   if(1 < argc)
     slen = std::atoi(argv[1]);
   if(2 < argc)

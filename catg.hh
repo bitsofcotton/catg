@@ -333,12 +333,16 @@ template <typename T> inline std::pair<int, int> CatG<T>::lmrRecur(const Vec& in
 
 template <typename T> std::vector<std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> > > crush(const std::vector<SimpleVector<T> >& v, const int& cs, T cut = - T(1) / T(2), const int& Mcount = - 1, const int& computer = 20) {
   std::vector<std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> > > result;
-  if(! v.size()) return result;
+  if(! v.size() || !v[0].size()) return result;
+  auto MM(v[0].dot(v[0]));
+  for(int i = 1; i < v.size(); i ++)
+    MM = max(MM, v[i].dot(v[i]));
+  MM = sqrt(MM);
   int t(0);
   result.emplace_back(std::pair<std::vector<std::pair<SimpleVector<T>, int> >, Catg<T> >());
   result[0].first.reserve(v.size());
   for(int i = 0; i < v.size(); i ++)
-    result[0].first.emplace_back(std::make_pair(v[i], i));
+    result[0].first.emplace_back(std::make_pair(v[i] / MM, i));
   while(t < result.size()) {
     if(! result[t].first.size()) {
       t ++;
@@ -376,18 +380,25 @@ template <typename T> std::vector<std::pair<std::vector<std::pair<SimpleVector<T
     } else
       t ++;
   }
+  for(int i = 0; i < result.size(); i ++)
+    for(int j = 0; j < result[i].first.size(); j ++)
+      result[i].first[j].first *= MM;
   return result;
 }
 
 template <typename T> std::vector<std::pair<std::vector<std::pair<std::pair<SimpleVector<T>, int>, int> >, Catg<T> > > crushNoContext(const std::vector<SimpleVector<T> >& v, const int& cs, T cut = - T(1) / T(2), const int& Mcount = - 1, const int& computer = 20) {
   std::vector<std::pair<std::vector<std::pair<std::pair<SimpleVector<T>, int>, int> >, Catg<T> > > result;
-  if(! v.size()) return result;
+  if(! v.size() || ! v[0].size()) return result;
+  auto MM(v[0].dot(v[0]));
+  for(int i = 1; i < v.size(); i ++)
+    MM = max(MM, v[i].dot(v[i]));
+  MM = sqrt(MM);
   std::vector<std::vector<std::pair<std::pair<SimpleVector<T>, int>, int> > > vv;
   int t(0);
   vv.emplace_back(std::vector<std::pair<std::pair<SimpleVector<T>, int>, int> >());
   vv[0].reserve(v.size());
   for(int i = 0; i < v.size(); i ++)
-    vv[0].emplace_back(std::make_pair(std::make_pair(v[i], 0), i));
+    vv[0].emplace_back(std::make_pair(std::make_pair(v[i] / MM, 0), i));
   std::vector<int> patch;
   patch.resize(v.size(), 0);
   while(t < vv.size()) {
@@ -455,6 +466,9 @@ template <typename T> std::vector<std::pair<std::vector<std::pair<std::pair<Simp
     cg.compute();
     result.emplace_back(std::make_pair(std::move(vv[i]), std::move(cg.catg)));
   }
+  for(int i = 0; i < result.size(); i ++)
+    for(int j = 0; j < result[i].first.size(); j ++)
+      result[i].first[j].first.first *= MM;
   return result;
 }
 
@@ -502,8 +516,7 @@ template <typename T> inline T P012L<T>::next(const T& in) {
     work[(t - 1) % work.size()] = in;
     return in;
   }
-  const auto v(dec.mother(work));
-  cache.emplace_back(v / sqrt(v.dot(v)));
+  cache.emplace_back(dec.mother(work));
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
   work[work.size() - 2] = in;

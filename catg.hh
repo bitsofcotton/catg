@@ -177,17 +177,22 @@ template <typename T> void CatG<T>::compute(const bool& recur) {
     for(int j = 0; j < Q.rows(); j ++)
       Pt(j, i) = qq[j];
     Pt(Q.rows(), i) = T(0);
-    q[i]   = i & 1 ? T(1) : - T(1);
+    q[i]   = i & 1 ? - T(1) : T(1);
     one[i] = T(1);
     fix[i] = false;
   }
   one /= sqrt(one.dot(one));
   Pt.row(Pt.rows() - 1)  = q - Pt.projectionPt(q);
   Pt.row(Pt.rows() - 1) /= sqrt(Pt.row(Pt.rows() - 1).dot(Pt.row(Pt.rows() - 1)));
-  assert(isfinite(Pt.row(Pt.rows() - 1).dot(Pt.row(Pt.rows() - 1))));
   auto Ptt(Pt);
   int  n_fixed;
   int  ntry(0);
+  if(! isfinite(Pt.row(Pt.rows() - 1).dot(Pt.row(Pt.rows() - 1)))) {
+    ntry ++;
+    Pt.resize(Ptt.rows() - 1, Ptt.cols());
+    for(int i = 0; i < Pt.rows(); i ++)
+      Pt.row(i) = std::move(Ptt.row(i));
+  }
  retry:
   for(n_fixed = 0; n_fixed < Pt.rows() - 1; n_fixed ++) {
     const auto on(Pt.projectionPt(- one));
@@ -484,10 +489,11 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
     const auto cat(crush<T>(cache, work.size(), inten, - 1, computer));
     pp = std::vector<Vec>();
     pp.reserve(cat.size());
+    static CatG<T> ncCaller;
     for(int i = 0; i < cat.size(); i ++) {
-      pp.emplace_back(CatG<T>::normalizeComputer(cat[i].first[0].first, computer));
+      pp.emplace_back(ncCaller.normalizeComputer(cat[i].first[0].first, computer));
       for(int j = 1; j < cat[i].first.size(); j ++)
-        pp[i] += CatG<T>::normalizeComputer(cat[i].first[j].first, computer);
+        pp[i] += ncCaller.normalizeComputer(cat[i].first[j].first, computer);
       pp[i] /= sqrt(pp[i].dot(pp[i]));
     }
     auto cache0(cache);

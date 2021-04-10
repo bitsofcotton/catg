@@ -59,8 +59,18 @@ template <typename T> inline void Catg<T>::inq(const Vec& in) {
 
 template <typename T> inline typename Catg<T>::Mat Catg<T>::compute() {
   Mat At(cache[0].size(), cache.size());
-  for(int i = 0; i < At.cols(); i ++)
+  T   MM(0), mm(0);
+  for(int i = 0; i < At.cols(); i ++) {
     At.setCol(i, cache[i]);
+    if(! i) MM = mm = At(0, 0);
+    for(int j = 0; j < At.rows(); j ++) {
+      MM = max(MM, At(j, i));
+      mm = min(mm, At(j, i));
+    }
+  }
+  for(int i = 0; i < At.rows(); i ++)
+    for(int j = 0; j < At.cols(); j ++)
+      At(i, j) -= mm + (MM - mm) / T(2);
   Mat Q(At.rows(), At.cols());
   for(int i = 0; i < Q.rows(); i ++)
     for(int j = 0; j < Q.cols(); j ++)

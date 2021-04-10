@@ -152,9 +152,9 @@ template <typename T> inline void CatG<T>::inq(const Vec& in, const int& compute
 
 template <typename T> inline void CatG<T>::inqRecur(const Vec& in, const int& computer) {
   auto work(in);
-  for(int i = 0; i < in.size(); i ++) {
+  for(int i = 1; i <= in.size(); i ++) {
     inq(work, computer);
-    if(i == in.size() - 1) break;
+    if(i == in.size()) break;
     for(int j = 0; j < work.size(); j ++)
       work[j] = in[(j + i * size / in.size()) % in.size()];
   }
@@ -233,7 +233,8 @@ template <typename T> void CatG<T>::compute(const bool& recur) {
       for(int i = 0; i < rvec.size(); i ++)
         rvec[i] = cut[i] + Pt.row(i).dot(one) * cut[cut.size() - 1];
       cut = catg.R * rvec;
-    }
+    } else
+      cut = catg.R * cut;
   } else if(ntry) {
     cut = Vec(catg.R.cols());
     for(int i = 0; i < cut.size(); i ++)

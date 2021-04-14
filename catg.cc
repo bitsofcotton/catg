@@ -83,8 +83,8 @@ int main(int argc, const char* argv[]) {
       va.emplace_back(v);
     }
   }
-  //const auto cg(crushNoContext<num_t>(va, slen, intensity, - 1, computer));
-  const auto cg(crush<num_t>(va, slen, intensity, - 1, computer));
+  const auto cg(crushNoContext<num_t>(va, slen, intensity, - 1, computer));
+  //const auto cg(crush<num_t>(va, slen, intensity, - 1, computer));
   for(int t = 0; t < cg.size(); t ++) {
     std::cout << "Pair(" << cg[t].first.size() << ")" << ", R: " << std::endl;
     for(int i = 0; i < cg[t].second.R.rows(); i ++) {

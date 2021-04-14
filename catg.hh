@@ -144,10 +144,13 @@ template <typename T> const typename CatG<T>::Mat& CatG<T>::tayl(const int& in) 
 template <typename T> inline typename CatG<T>::Vec CatG<T>::normalizeComputer(const Vec& v, const int& computer) {
   if(computer < 0)
     return v;
+  auto res(v);
+  for(int i = 0; i < res.size(); i ++)
+    res[i] = tan(res[i]);
   T pd(0);
   for(int i = 0; i < v.size(); i ++)
     pd += log(abs(v[i]));
-  const auto res(v * exp((computer ? T(computer) * pd : - pd) / T(v.size())));
+  res *= exp((computer ? T(computer) * pd : - pd) / T(v.size()));
   assert(isfinite(res.dot(res)) && res.dot(res) != T(0));
   return res;
 }

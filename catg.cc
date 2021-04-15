@@ -64,32 +64,25 @@ int main(int argc, const char* argv[]) {
   std::string s;
   int  slen(8);
   auto intensity(- num_t(1) / num_t(2));
-  int  computer(8);
   if(1 < argc)
     slen = std::atoi(argv[1]);
   if(2 < argc)
     intensity = std::atof(argv[2]);
-  if(3 < argc)
-    computer  = std::atoi(argv[3]);
   SimpleVector<num_t> v(slen);
-  Decompose<num_t>    dec(v.size());
   std::vector<SimpleVector<num_t> > va;
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
     ins >> v[t % slen];
-    if(! ((t ++) % slen) && 1 < t) {
-      // va.emplace_back(dec.mother(v));
+    if(! ((t ++) % slen) && 1 < t)
       va.emplace_back(v);
-    }
   }
-  const auto cg(crushNoContext<num_t>(va, slen, intensity, - 1, computer));
-  //const auto cg(crush<num_t>(va, slen, intensity, - 1, computer));
+  const auto cg(crush<num_t>(va, slen, true, intensity, - 1, 8));
   for(int t = 0; t < cg.size(); t ++) {
-    std::cout << "Pair(" << cg[t].first.size() << ")" << ", R: " << std::endl;
-    for(int i = 0; i < cg[t].second.R.rows(); i ++) {
-      for(int j = 0; j < cg[t].second.R.cols(); j ++)
-        std::cout << cg[t].second.R(i, j) << "\t";
+    std::cout << "Pair(" << cg[t].first.first.size() << ")" << ", R: " << std::endl;
+    for(int i = 0; i < cg[t].second.rows(); i ++) {
+      for(int j = 0; j < cg[t].second.cols(); j ++)
+        std::cout << cg[t].second(i, j) << "\t";
       std::cout << std::endl;
     }
     std::cout << std::endl;

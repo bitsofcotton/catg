@@ -33,7 +33,8 @@ Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multipl
 
 # Tips
 If input order has the meaning, this categorizes the input as it costs O(input length^2\*status size^2\*f(complexity))
-if it's all cached.
+if it's all cached. If it's not (input order doesn't have the meaning), we can't make any meaningful blocks on them
+with this algorithm.
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

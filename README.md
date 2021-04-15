@@ -33,8 +33,8 @@ Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multipl
 
 # Tips
 This catg only depends input dimension order and block condition.
-We can avoid block condition with sliding bits, but we can't avoid non same block
-size condition without some other algorithms nor hypothesis.
+We can avoid block condition with sliding bits, but to avoid non same block size condition,
+we also input each block sizes on this. It's difficult to calculate in real world time.
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

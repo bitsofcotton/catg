@@ -32,7 +32,7 @@ if original {a_k} has a habit.
 Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times to crack category.
 
 # Tips
-If input order has the meaning, this categorizes the input as it costs O(n^2) input, so O(n^3\*status size^2).
+If input order has the meaning, this categorizes the input as it costs O(input length^2\*status size^2\*f(complexity)).
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

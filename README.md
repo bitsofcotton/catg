@@ -32,9 +32,9 @@ if original {a_k} has a habit.
 Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times to crack category.
 
 # Tips
-If input order has the meaning, this categorizes the input as it costs O(input length^2\*status size^2\*f(complexity))
-if it's all cached. If it's not (input order doesn't have the meaning), we can't make any meaningful blocks on them
-with this algorithm.
+If input order makes some blocks, this categorizes the input as it costs O(input length^2\*status size^2\*f(complexity))
+if it's all cached. If it's not (input order doesn't make any blocks), sorted each element input is also same meaning
+on categorize. When they are sorted, it's on the field of statistics.
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

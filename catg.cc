@@ -24,24 +24,17 @@ int main(int argc, const char* argv[]) {
     // XXX atof:
     intensity = std::atof(argv[2]);
   SimpleVector<num_t> v(slen);
-  std::vector<SimpleVector<num_t> > va;
+  std::vector<num_t> vv;
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
-    ins >> v[t % slen];
-    if(! ((t ++) % slen) && 1 < t)
-      va.emplace_back(v);
+    vv.emplace_back(num_t(0));
+    ins >> vv[vv.size() - 1];
   }
-  const auto cg(crush<num_t>(va, slen, ! true, intensity, - 1, 8));
-  for(int t = 0; t < cg.size(); t ++) {
-    std::cout << "Pair(" << cg[t].first.first.size() << ")" << ", R: " << std::endl;
-    for(int i = 0; i < cg[t].second.rows(); i ++) {
-      for(int j = 0; j < cg[t].second.cols(); j ++)
-        std::cout << cg[t].second(i, j) << "\t";
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
-  }
+  const auto cg(crushWithOrder<num_t>(vv, slen, intensity, - 1, 8));
+  std::cout << cg.size() << "pairs." << std::endl;
+  for(int t = 0; t < cg.size(); t ++)
+    std::cout << cg[t].first.size() << std::endl;
   return 0;
 }
 

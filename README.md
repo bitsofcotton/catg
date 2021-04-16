@@ -19,7 +19,13 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
     // cg[/* index */].first.first  : learned vector itself.
     // cg[/* index */].first.second : vector pair (align, index).
     // cg[/* index */].second : learned manner.
-    
+    const auto cc(crushWithOrder<double>(std::vector<double>(...),
+      /* cut intensity (<0 for adjust ratio first result) */,
+      /* maximum count on result */,
+      /* complexity */);
+    // cc[/* index */].first  : divided vector itself.
+    // cc[/* index */].second : divided vector indices.
+
 # How to use (commandline)
     ./catg <status dimension> <cut intensity> < data.txt
 
@@ -32,9 +38,7 @@ if original {a_k} has a habit.
 Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times to crack category.
 
 # Tips
-If input order makes some blocks, this categorizes the input as it costs O(input length^2\*status size^2\*f(complexity))
-if it's all cached. If it's not (input order doesn't make any blocks), sorted each element input is also same meaning
-on categorize. When they are sorted, it's on the field of statistics.
+If we have 2 or more dimension data, the ordering is something different compared with serialized one dimension data. So we have a possibility not to categorize such data.
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

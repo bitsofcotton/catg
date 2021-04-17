@@ -252,7 +252,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
     const auto& sec(whole_crush[i].first.second);
     idx.reserve(sec.size());
     for(int j = 0; j < sec.size(); j ++)
-      idx.emplace_back(std::distance(std::lower_bound(edge.begin(), edge.end(), sec[j].second), edge.begin()));
+      idx.emplace_back(sec[j].second - *std::lower_bound(edge.begin(), edge.end(), sec[j].second));
     res.emplace_back(make_pair(move(whole_crush[i].first.first), move(idx)));
   }
   return res;

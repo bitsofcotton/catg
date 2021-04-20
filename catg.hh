@@ -267,7 +267,7 @@ public:
   T next(const T& in, const int& complexity = 8);
 private:
   vector<Vec> cache;
-  vector<Vec> pp;
+  vector<pair<Vec, T> > pp;
   Vec work;
   int stat;
   int slide;
@@ -312,14 +312,19 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
   if(stat <= cache.size()) {
-    const auto cat(crush<T>(cache, work.size(), false, inten, work.size() * 4, complexity));
-    pp = vector<Vec>();
+    const auto cat(crush<T>(cache, work.size(), false, inten, - 1, complexity));
+    pp = vector<pair<Vec, T> >();
     pp.reserve(cat.size());
     for(int i = 0; i < cat.size(); i ++) {
-      pp.emplace_back(cat[i].first.first[0]);
-      for(int j = 1; j < cat[i].first.first.size(); j ++)
-        pp[i] += cat[i].first.first[j];
-      pp[i] /= sqrt(pp[i].dot(pp[i]));
+      vector<Vec> pw;
+      T M(0);
+      for(int j = 0; j < cat[i].first.first.size(); j ++)
+        M = max(M, sqrt(cat[i].first.first[j].dot(cat[i].first.first[j])));
+      M *= T(2);
+      for(int j = 0; j < cat[i].first.first.size(); j ++)
+        pw.emplace_back(makeProgramInvariant<T>(cat[i].first.first[j] / M, complexity, - T(1)));
+      if(pw[0].size() < pw.size())
+        pp.emplace_back(make_pair(linearInvariant<T>(pw), M));
     }
     auto cache0(cache);
     cache = vector<Vec>();
@@ -329,15 +334,24 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
   }
   T MM(0);
   T res(0);
+  auto worki(pp.size() ? pp[0].first : SimpleVector<T>());
+  for(int i = 0; i < worki.size() - 1; i ++)
+    worki[i] = work[i];
+  if(worki.size()) worki[work.size()] = T(1);
   for(int i = 0; i < pp.size(); i ++) {
-    const auto& p(pp[i]);
+    const auto& p(pp[i].first);
     if(! p.size()) continue;
-    const auto  vdp((dec ? decompose[work.size()].mother(work) : work).dot(p));
-    const auto  last(p[p.size() - 1] - p[p.size() - 2]);
+    const auto  vdp0(dec ? decompose[work.size()].mother(work) : work);
+    const auto  vdpn(vdp0 / pp[i].second);
+    bool flag(true);
+    for(int j = 0; j < vdpn.size() && flag; j ++)
+      if(vdpn[j] < - T(1) || T(1) < vdpn[j]) flag = false;
+    if(! flag) continue;
+    const auto  vdp(makeProgramInvariant<T>(vdpn, complexity, - T(1)).dot(p));
     if(! isfinite(vdp)) continue;
-    if(MM <= abs(vdp)) {
+    if(MM < abs(vdp)) {
       MM  = abs(vdp);
-      res = last * vdp;
+      res = atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()] * T(2) / atan2(T(1), T(1)) - T(1)) - work[work.size() - 2];
     }
   }
   return in + res;

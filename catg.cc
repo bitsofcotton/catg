@@ -31,10 +31,16 @@ int main(int argc, const char* argv[]) {
     vv.emplace_back(num_t(0));
     ins >> vv[vv.size() - 1];
   }
-  const auto cg(crushWithOrder<num_t>(vv, slen, intensity, - 1, 8));
+  auto cg(crushWithOrder<num_t>(vv, slen, intensity, - 1, 8));
   std::cout << cg.size() << "pairs." << std::endl;
-  for(int t = 0; t < cg.size(); t ++)
-    std::cout << cg[t].first.size() << std::endl;
+  for(int t = 0; t < cg.size(); t ++) {
+    std::sort(cg[t].second.begin(), cg[t].second.end());
+    cg[t].second.erase(std::unique(cg[t].second.begin(), cg[t].second.end()), cg[t].second.end());
+    std::cout << cg[t].first.size() << " : " << std::endl;
+    for(int j = 0; j < cg[t].second.size(); j ++)
+      std::cout << cg[t].second[j] << " ";
+    std::cout << std::endl;
+  }
   return 0;
 }
 

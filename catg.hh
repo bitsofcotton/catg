@@ -170,7 +170,7 @@ template <typename T> inline pair<T, int> CatG<T>::score(const Vec& in) {
 }
 
 
-template <typename T> vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int, int> > >, SimpleMatrix<T> > > crush(const vector<SimpleVector<T> >& v, const int& cs, const bool& recur, T cut = - T(1) / T(2), const int& Mcount = - 1, const int& complexity = 8) {
+template <typename T> vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int, int> > >, SimpleMatrix<T> > > crush(const vector<SimpleVector<T> >& v, const int& cs, const bool& recur, T cut = - T(1) / T(2), const int& Mcount = - 1, const int& complexity = 8, const bool& reset_mcut = false) {
   vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int, int> > >, SimpleMatrix<T> > > result;
   if(! v.size() || !v[0].size()) return result;
   auto MM(v[0].dot(v[0]));
@@ -193,8 +193,12 @@ template <typename T> vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int
     CatG<T> catg(cs, recur, complexity);
     catg.compute(result[t].first.first);
     if(! t && cut <= T(0)) {
-      cut = catg.distance * abs(cut);
-      std::cerr << "c(" << catg.distance << ")" << std::flush;
+      static T mcut(0);
+      if(mcut == T(0) || reset_mcut ||
+         (catg.distance != T(0) && abs(catg.distance) < mcut) )
+        mcut = abs(catg.distance);
+      cut = mcut * abs(cut);
+      // cerr << "c(" << cut << ")" << flush;
     }
     if(catg.cut.size() && (cut <= catg.distance ||
        (0 < Mcount && Mcount < result[t].first.first.size())) ) {
@@ -264,7 +268,7 @@ template <typename T, bool dec = true> class P012L {
 public:
   typedef SimpleVector<T> Vec;
   inline P012L();
-  inline P012L(const int& d, const int& stat, const int& complexity = - 8, const T& intensity = - T(1) / T(2));
+  inline P012L(const int& d, const int& stat, const int& complexity = - 8);
   inline ~P012L();
   T next(const T& in);
 private:
@@ -273,19 +277,17 @@ private:
   Vec work;
   int stat;
   int comp;
-  T   inten;
   int t;
 };
 
 template <typename T, bool dec> inline P012L<T,dec>::P012L() {
-  inten = T(t = stat = comp = 0);
+  t = stat = comp = 0;
 }
 
-template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat, const int& complexity, const T& intensity) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat, const int& complexity) {
   work.resize(d);
   cache.reserve(this->stat = stat);
   comp  = complexity;
-  inten = intensity;
   t = 0;
 }
 
@@ -313,7 +315,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
   if(stat <= cache.size()) {
-    const auto cat(crush<T>(cache, work.size(), false, inten, - 1, comp));
+    const auto cat(crush<T>(cache, work.size(), false, - sqrt(T(cache.size())), - 1, comp));
     pp = vector<pair<Vec, T> >();
     pp.reserve(cat.size());
     for(int i = 0; i < cat.size(); i ++) {

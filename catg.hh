@@ -192,8 +192,10 @@ template <typename T> vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int
     }
     CatG<T> catg(cs, recur, complexity);
     catg.compute(result[t].first.first);
-    if(! t && cut <= T(0))
+    if(! t && cut <= T(0)) {
       cut = catg.distance * abs(cut);
+      std::cerr << "c(" << catg.distance << ")" << std::flush;
+    }
     if(catg.cut.size() && (cut <= catg.distance ||
        (0 < Mcount && Mcount < result[t].first.first.size())) ) {
       vector<SimpleVector<T> > left;
@@ -262,29 +264,28 @@ template <typename T, bool dec = true> class P012L {
 public:
   typedef SimpleVector<T> Vec;
   inline P012L();
-  inline P012L(const int& d, const int& stat, const int& slide, const T& intensity = - T(1) / T(2));
+  inline P012L(const int& d, const int& stat, const int& complexity = - 8, const T& intensity = - T(1) / T(2));
   inline ~P012L();
-  T next(const T& in, const int& complexity = 8);
+  T next(const T& in);
 private:
   vector<Vec> cache;
   vector<pair<Vec, T> > pp;
   Vec work;
   int stat;
-  int slide;
+  int comp;
   T   inten;
   int t;
 };
 
 template <typename T, bool dec> inline P012L<T,dec>::P012L() {
-  inten = T(t = stat = slide = 0);
+  inten = T(t = stat = comp = 0);
 }
 
-template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat, const int& slide, const T& intensity) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat, const int& complexity, const T& intensity) {
   work.resize(d);
-  cache.reserve(stat);
-  this->stat  = stat;
-  this->slide = slide;
-  this->inten = intensity;
+  cache.reserve(this->stat = stat);
+  comp  = complexity;
+  inten = intensity;
   t = 0;
 }
 
@@ -292,7 +293,7 @@ template <typename T, bool dec> inline P012L<T,dec>::~P012L() {
   ;
 }
 
-template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const int& complexity) {
+template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   static vector<Decompose<T> > decompose;
   static vector<bool> isinit;
   if(dec && decompose.size() <= work.size()) {
@@ -312,7 +313,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
   for(int i = 0; i < work.size() - 1; i ++)
     work[i] = work[i + 1];
   if(stat <= cache.size()) {
-    const auto cat(crush<T>(cache, work.size(), false, inten, - 1, complexity));
+    const auto cat(crush<T>(cache, work.size(), false, inten, - 1, comp));
     pp = vector<pair<Vec, T> >();
     pp.reserve(cat.size());
     for(int i = 0; i < cat.size(); i ++) {
@@ -322,15 +323,11 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
         M = max(M, sqrt(cat[i].first.first[j].dot(cat[i].first.first[j])));
       M *= T(2);
       for(int j = 0; j < cat[i].first.first.size(); j ++)
-        pw.emplace_back(makeProgramInvariant<T>(cat[i].first.first[j] / M, complexity, - T(1)));
+        pw.emplace_back(makeProgramInvariant<T>(cat[i].first.first[j] / M, comp, - T(1)));
       if(pw[0].size() < pw.size())
         pp.emplace_back(make_pair(linearInvariant<T>(pw), M));
     }
-    auto cache0(cache);
-    cache = vector<Vec>();
-    cache.reserve(stat);
-    for(int i = 0; i < slide; i ++)
-      cache.emplace_back(move(cache0[i - slide + cache0.size()]));
+    cache.erase(cache.begin());
   }
   T MM(0);
   T res(0);
@@ -347,7 +344,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in, const i
     for(int j = 0; j < vdpn.size() && flag; j ++)
       if(vdpn[j] < - T(1) || T(1) < vdpn[j]) flag = false;
     if(! flag) continue;
-    const auto  vdp(makeProgramInvariant<T>(vdpn, complexity, - T(1)).dot(p));
+    const auto  vdp(makeProgramInvariant<T>(vdpn, comp, - T(1)).dot(p));
     if(! isfinite(vdp)) continue;
     if(MM < abs(vdp)) {
       MM  = abs(vdp);

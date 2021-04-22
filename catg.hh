@@ -250,7 +250,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
     }
     edge.emplace_back(work.size());
   }
-  auto whole_crush(crush<T>(work, cs, false, cut, Mcount, complexity));
+  auto whole_crush(crush<T>(work, cs, false, cut, Mcount, complexity, true));
   vector<pair<vector<SimpleVector<T> >, vector<int> > > res;
   res.reserve(whole_crush.size());
   for(int i = 0; i < whole_crush.size(); i ++) {

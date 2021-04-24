@@ -192,7 +192,7 @@ template <typename T> vector<pair<pair<vector<SimpleVector<T> >, vector<pair<int
     catg.compute(result[t].first.first);
     if(! t && cut <= T(0)) {
       cut = abs(cut) * catg.distance;
-      cerr << "c(" << cut << ")" << flush;
+      // cerr << "c(" << cut << ")" << flush;
     }
     if(catg.cut.size() && (cut <= catg.distance ||
        (0 < Mcount && Mcount < result[t].first.first.size())) ) {
@@ -302,8 +302,9 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   }
   if(t ++ < work.size() - 1) {
     work[(t - 1) % work.size()] = in;
-    return in;
+    return T(0);
   }
+  if(work[work.size() - 2] == in) goto skip;
   work[work.size() - 1] = in;
   cache.emplace_back(dec ? decompose[work.size()].mother(work) : work);
   for(int i = 0; i < work.size() - 1; i ++)
@@ -325,6 +326,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
     }
     cache.erase(cache.begin());
   }
+ skip:
   T MM(0);
   T res(0);
   auto worki(pp.size() ? pp[0].first : SimpleVector<T>());
@@ -343,11 +345,14 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
     const auto  vdp(makeProgramInvariant<T>(vdpn).dot(p));
     if(! isfinite(vdp)) continue;
     if(MM < abs(vdp)) {
-      MM  = abs(vdp);
-      res = (atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) - work[work.size() - 2];
+      const auto v((atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) * pp[i].second);
+      if(v != T(0)) {
+        MM  = abs(vdp);
+        res = v;
+      }
     }
   }
-  return in + res;
+  return res;
 }
 
 #define _CATG_

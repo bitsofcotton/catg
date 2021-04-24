@@ -12,30 +12,19 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
       in.emplace_back(SimpleVector<double>(/* some size */));
       // in[in.size() - 1] operations.
     const auto cg(crush<double>(in, /* some size */,
-      /* is no align */,
-      /* cut intensity (<0 for adjust ratio first result) */,
-      /* maximum count on result */,
-      /* complexity */);
-    // cg[/* index */].first.first  : learned vector itself.
-    // cg[/* index */].first.second : vector pair (align, index).
-    // cg[/* index */].second : learned manner.
+      /* is no align */, /* count of blocks? */));
+    // cg[/* index */].first  : separated vector itself.
+    // cg[/* index */].second : vector pair (align, index).
     const auto cc(crushWithOrder<double>(std::vector<double>(...),
-      /* cut intensity (<0 for adjust ratio first result) */,
-      /* maximum count on result */,
-      /* complexity */);
+      /* some size */, /* count of blocks? */));
     // cc[/* index */].first  : divided vector itself.
     // cc[/* index */].second : divided vector indices.
 
 # How to use (commandline)
-    ./catg <status dimension> <cut intensity> < data.txt
+    ./catg <status dimension> < data.txt
 
 # Description
-From #{a_k subset R^n} == m, with below, this catg learns {a_1, ..., a_m} habit on e_k's importance manner.
-
-If there exists pre-categorized groups, this learns their habit and (R^{-1} v) is stable for their importance
-if original {a_k} has a habit.
-
-Otherwise, we should solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times to crack category.
+We solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times on invariant of makeProgramInvariant.
 
 # Tips
 If we have 2 or more dimension data, the ordering is something different compared with serialized one dimension data. So we have a possibility not to categorize such data.

@@ -344,7 +344,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
     if(! isfinite(vdp)) continue;
     if(MM < abs(vdp)) {
       MM  = abs(vdp);
-      res = atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()] * T(2) / atan2(T(1), T(1)) - T(1)) - work[work.size() - 2];
+      res = (atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) - work[work.size() - 2];
     }
   }
   return in + res;

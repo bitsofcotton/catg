@@ -332,18 +332,20 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
  skip:
   T MM(0);
   T res(0);
+  if(M == T(0)) return res;
   auto worki(pp.size() ? pp[0] : SimpleVector<T>());
   for(int i = 0; i < worki.size() - 1; i ++)
     worki[i] = work[i];
   if(worki.size()) worki[work.size()] = T(1);
+  const auto vdp0(dec ? decompose[work.size()].mother(work) : work);
+  const auto vdpn(makeProgramInvariant<T>(vdp0 / M / T(2)));
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
     if(! p.size()) continue;
-    const auto vdp0(dec ? decompose[work.size()].mother(work) : work);
-    const auto vdp(makeProgramInvariant<T>(vdp0 / M / T(2)).dot(p));
+    const auto vdp(vdpn.dot(p) / sqrt(vdpn.dot(vdpn) * p.dot(p)));
     if(! isfinite(vdp)) continue;
-    if(MM < abs(vdp)) {
-      const auto v((atan((p.dot(worki) - p[work.size()] * worki[work.size()]) / worki[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) * M * T(2));
+    if(MM < abs(vdp) && p[work.size()] != T(0)) {
+      const auto v((atan((p.dot(vdpn) - p[work.size()] * vdpn[work.size()]) / p[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) * M * T(2));
       if(v != T(0)) {
         MM  = abs(vdp);
         res = v;

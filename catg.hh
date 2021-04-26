@@ -272,7 +272,7 @@ template <typename T, bool dec = true> class P012L {
 public:
   typedef SimpleVector<T> Vec;
   inline P012L();
-  inline P012L(const int& d, const int& stat);
+  inline P012L(const int& stat, const int& d);
   inline ~P012L();
   T next(const T& in);
 private:
@@ -288,7 +288,7 @@ template <typename T, bool dec> inline P012L<T,dec>::P012L() {
   M = T(t = stat = 0);
 }
 
-template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& d, const int& stat) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& stat, const int& d) {
   work.resize(d);
   cache.reserve(this->stat = stat);
   M = T(t = 0);

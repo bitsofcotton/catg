@@ -34,6 +34,5 @@ If we have 2 or more dimension data, the ordering is something different compare
 * https://1drv.ms/u/s!AnqkwcwMjB_PaDIfXya_M3-aLXw?e=qzfKcU
 * https://ja.osdn.net/users/bitsofcotton/
 
-# Archive
-This repository is archived, so without bugreport, will no change.
-
+# Refresh Archived
+This repository is close state without external library.

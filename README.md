@@ -27,7 +27,7 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
 We solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times on invariant of makeProgramInvariant.
 
 # Tips
-If we have 2 or more dimension data, the ordering is something different compared with serialized one dimension data. So we have a possibility not to categorize such data.
+If we have 2 or more dimension nor non ordered data, the ordering is something different compared with serialized one dimension data. So we have a possibility not to categorize such data.
 
 # Another Download Sites
 * https://drive.google.com/drive/folders/1B71X1BMttL6yyi76REeOTNRrpopO8EAR?usp=sharing

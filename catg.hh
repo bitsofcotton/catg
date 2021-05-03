@@ -185,7 +185,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
   }
   vector<pair<T, pair<int, bool> > > sidx;
   sidx.emplace_back(make_pair(T(0), make_pair(0, false)));
-  while(sidx.size() < count) {
+  while(sidx.size() < (count ? count : v.size())) {
     sort(sidx.begin(), sidx.end());
     int iidx(sidx.size() - 1);
     for( ; - 1 <= iidx; iidx --)
@@ -215,7 +215,9 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
         sidx.emplace_back(make_pair(catg.distance, make_pair(sidx.size(), false)));
       } else {
         result[t].first = move(left);
-        result[t].first.insert(result[t].first.end(), right.begin(), right.end());
+        result[t].first.reserve(result[t].first.size() + right.size());
+        for(int i = 0; i < right.size(); i ++)
+          result[t].first.emplace_back(move(right[i]));
         sidx[iidx].first = catg.distance;
         sidx[iidx].second.second = true;
       }

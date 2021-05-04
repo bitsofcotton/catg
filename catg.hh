@@ -214,10 +214,14 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
         result.emplace_back(make_pair(move(right), move(ridx)));
         sidx.emplace_back(make_pair(catg.distance, make_pair(sidx.size(), false)));
       } else {
-        result[t].first = move(left);
+        result[t].first  = move(left);
+        result[t].second = move(lidx);
         result[t].first.reserve(result[t].first.size() + right.size());
-        for(int i = 0; i < right.size(); i ++)
+        result[t].second.reserve(result[t].second.size() + ridx.size());
+        for(int i = 0; i < right.size(); i ++) {
           result[t].first.emplace_back(move(right[i]));
+          result[t].second.emplace_back(move(ridx[i]));
+        }
         sidx[iidx].first = catg.distance;
         sidx[iidx].second.second = true;
       }

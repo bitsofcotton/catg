@@ -7,9 +7,10 @@
 #include <iomanip>
 #include <assert.h>
 
-#include "ifloat.hh"
+#include "lieonn.hh"
 typedef myfloat num_t;
-#include "simplelin.hh"
+#include <cmath>
+using std::sqrt;
 #include "decompose.hh"
 #include "catg.hh"
 
@@ -19,15 +20,14 @@ int main(int argc, const char* argv[]) {
   int  slen(8);
   if(1 < argc)
     slen = std::atoi(argv[1]);
-  SimpleVector<num_t> v(slen);
-  std::vector<num_t> vv;
+  std::vector<num_t> v;
   int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
-    vv.emplace_back(num_t(0));
-    ins >> vv[vv.size() - 1];
+    v.emplace_back(num_t(0));
+    ins >> v[v.size() - 1];
   }
-  auto cg(crushWithOrder<num_t>(vv, slen));
+  auto cg(crushWithOrder<num_t>(v, slen));
   std::cout << cg.size() << "pairs." << std::endl;
   for(int t = 0; t < cg.size(); t ++) {
     std::sort(cg[t].second.begin(), cg[t].second.end());

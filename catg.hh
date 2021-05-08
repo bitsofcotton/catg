@@ -252,11 +252,20 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
     for(int j = 0; j <= v.size() - i; j ++) {
       for(int k = j; k < j + i; k ++)
         buf[k - j] = v[k];
+      if(cs < 0) {
+        vector<T> wbuf;
+        wbuf.reserve(buf.size());
+        for(int k = 0; k < buf.size(); k ++)
+          wbuf.emplace_back(buf[k]);
+        std::sort(wbuf.begin(), wbuf.end());
+        for(int k = 0; k < buf.size(); k ++)
+          buf[k] = wbuf[k];
+      }
       work.emplace_back(buf);
     }
     edge.emplace_back(work.size());
   }
-  auto whole_crush(crush<T>(work, cs, false, count));
+  auto whole_crush(crush<T>(work, abs(cs), false, count));
   vector<pair<vector<SimpleVector<T> >, vector<int> > > res;
   res.reserve(whole_crush.size());
   for(int i = 0; i < whole_crush.size(); i ++) {

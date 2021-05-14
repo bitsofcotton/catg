@@ -354,7 +354,8 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
     const auto vdps(vdp.dot(p) / sqrt(vdp.dot(vdp) * p.dot(p)));
     if(! isfinite(vdps)) continue;
     if(MM < abs(vdps) && p[work.size()] != T(0)) {
-      const auto v((atan((p.dot(vdp) - p[work.size()] * vdp[work.size()]) / p[work.size()]) * T(4) / atan2(T(1), T(1)) - T(1)) * M);
+      const auto p0((p.dot(vdp) - p[work.size()] * vdp[work.size()]) / p[work.size()]);
+      const auto v((atan(p0) * T(4) / atan(T(1)) - T(1)) * M);
       if(v != T(0)) {
         MM  = abs(vdps);
         res = v;

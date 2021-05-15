@@ -115,6 +115,12 @@ template <typename T> inline CatG<T>::CatG(const int& size, const vector<Vec>& i
     s.emplace_back(makeProgramInvariant(in[i].size() == size ? in[i] : tayl(size, in[i].size()) * in[i]).dot(cut));
   std::sort(s.begin(), s.end());
   distance = origin = T(0);
+  for(int i = 0; i < s.size() - 1; i ++)
+    if(distance >= s[i + 1] - s[i]) {
+      distance =  s[i + 1] - s[i];
+      origin   = (s[i + 1] + s[i]) / T(2);
+    }
+  return;
 }
 
 template <typename T> inline CatG<T>::~CatG() {

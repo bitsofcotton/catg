@@ -45,18 +45,20 @@ public:
   inline CatG();
   inline CatG(const int& size, const vector<Vec>& in, const bool& recur = false);
   inline ~CatG();
-  inline pair<T, int> score(const Vec& in, const int& recur = false);
-  Vec cut;
-  T   distance;
-  T   origin;
+  inline pair<T, int> score(const Vec& in);
+  Vec  cut;
+  T    distance;
+  T    origin;
   const Mat& tayl(const int& size, const int& in);
+  bool recur;
 };
 
 template <typename T> inline CatG<T>::CatG() {
-  ;
+  recur = false;
 }
 
 template <typename T> inline CatG<T>::CatG(const int& size, const vector<Vec>& in, const bool& recur) {
+  this->recur = recur;
   const auto block(recur ? size : 1);
   SimpleMatrix<T> A(in.size() * block, size + 1);
   for(int i = 0; i < in.size(); i ++)
@@ -140,7 +142,7 @@ template <typename T> const typename CatG<T>::Mat& CatG<T>::tayl(const int& size
   return t[in];
 }
 
-template <typename T> inline pair<T, int> CatG<T>::score(const Vec& in, const int& recur) {
+template <typename T> inline pair<T, int> CatG<T>::score(const Vec& in) {
   const auto size(cut.size() - 1);
   assert(0 < size);
   if(! recur)
@@ -191,7 +193,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
       vector<pair<int, int> >  lidx;
       vector<pair<int, int> >  ridx;
       for(int i = 0; i < result[t].first.size(); i ++) {
-        const auto score(catg.score(result[t].first[i], recur));
+        const auto score(catg.score(result[t].first[i]));
         (score.first < T(0) ? left : right).emplace_back(move(result[t].first[i]));
         (score.first < T(0) ? lidx : ridx).emplace_back(make_pair(score.second, result[t].second[i].second));
       }

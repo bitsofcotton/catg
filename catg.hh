@@ -286,14 +286,16 @@ template <typename T> static inline vector<pair<vector<SimpleVector<T> >, vector
 template <typename T, bool dec = true> class P012L {
 public:
   typedef SimpleVector<T> Vec;
+  typedef SimpleMatrix<T> Mat;
   inline P012L();
-  inline P012L(const int& stat, const int& d);
+  inline P012L(const int& stat, const int& d, const int& comp);
   inline ~P012L();
   T next(const T& in);
 private:
   vector<Vec> cache;
   vector<Vec> pp;
   Vec work;
+  Mat pc;
   int stat;
   int t;
   T   M;
@@ -303,10 +305,24 @@ template <typename T, bool dec> inline P012L<T,dec>::P012L() {
   M = T(t = stat = 0);
 }
 
-template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& stat, const int& d) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& stat, const int& d, const int& comp) {
   work.resize(d);
   cache.reserve(this->stat = stat);
   M = T(t = 0);
+  pc = Mat(comp, d);
+  for(int i = 0; i < pc.rows() - 1; i ++) {
+    const auto work(taylor(pc.cols() - 1, T(1) / T(pc.rows() - 2) * T(pc.cols() - 2)));
+    for(int j = 0; j < work.size(); j ++)
+      pc(i, j) = work[j];
+    pc(i, work.size()) = T(0);
+  }
+  for(int i = 0; i < pc.cols(); i ++)
+    pc(pc.rows() - 1, i) = T(i == pc.cols() - 1 ? 1 : 0);
+  T MM(0);
+  for(int i = 0; i < pc.rows(); i ++)
+    for(int j = 0; j < pc.cols(); j ++)
+      MM = max(MM, abs(pc(i, j)));
+  pc /= MM * T(4);
 }
 
 template <typename T, bool dec> inline P012L<T,dec>::~P012L() {
@@ -331,10 +347,10 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
       pp = vector<Vec>();
       pp.reserve(cat.size());
       for(int i = 0; i < cat.size(); i ++) {
-        if(cat[i].first.size() <= work.size()) continue;
+        if(cat[i].first.size() <= pc.rows()) continue;
         vector<Vec> pw;
         for(int j = 0; j < cat[i].first.size(); j ++)
-          pw.emplace_back(makeProgramInvariant<T>(cat[i].first[j] / M));
+          pw.emplace_back(makeProgramInvariant<T>(pc * cat[i].first[j] / M));
         pp.emplace_back(linearInvariant<T>(pw));
       }
       cache.erase(cache.begin());
@@ -347,7 +363,7 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   for(int i = 0; i < worki.size() - 1; i ++)
     worki[i] = worki[i + 1];
   const auto vdp(makeProgramInvariant<T>(
-    (dec ? decompose.mother(worki) : worki) / M));
+    pc * (dec ? decompose.mother(worki) : worki) / M));
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
     if(! p.size()) continue;

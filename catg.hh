@@ -161,6 +161,7 @@ template <typename T> inline pair<T, int> CatG<T>::score(const Vec& in) {
 
 
 template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int> > > > crush(const vector<SimpleVector<T> >& v, const int& cs, const bool& recur, const int& count) {
+  assert(0 <= count);
   vector<pair<vector<SimpleVector<T> >, vector<pair<int, int> > > > result;
   if(! v.size() || !v[0].size()) return result;
   auto MM(v[0].dot(v[0]));
@@ -332,46 +333,43 @@ template <typename T, bool dec> inline P012L<T,dec>::~P012L() {
 }
 
 template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
-  if(M < abs(in) * T(2)) M = abs(in) * T(4);
   if(work[min(max(0, t - 1), work.size() - 1)] == in) return T(0);
+  if(M < abs(in) * T(2)) M = abs(in) * T(4);
   if(t ++ < work.size() - 1) {
     work[(t - 1) % work.size()] = in;
     return T(0);
   }
   Decompose<T> decompose(work.size());
-  if(work[work.size() - 2] != in) {
-    work[work.size() - 1] = in;
-    cache.emplace_back(pc * (dec ? decompose.mother(work) : work));
-    for(int i = 0; i < work.size() - 2; i ++)
-      work[i] = move(work[i + 1]);
-    work[work.size() - 2] = work[work.size() - 1];
-    if(stat <= cache.size()) {
-      const auto cat(crush<T>(cache, cache[0].size(), false, cache.size() / pc.rows()));
-      pp = vector<Vec>();
-      pp.reserve(cat.size());
-      for(int i = 0; i < cat.size(); i ++) {
-        if(cat[i].first.size() <= pc.rows()) continue;
-        vector<Vec> pw;
-        pw.reserve(cat[i].first.size());
-        for(int j = 0; j < cat[i].first.size(); j ++)
-          pw.emplace_back(makeProgramInvariant<T>(cat[i].first[j] / M));
-        pp.emplace_back(linearInvariant<T>(pw));
-      }
-      cache.erase(cache.begin());
+  work[work.size() - 1] = in;
+  cache.emplace_back(pc * (dec ? decompose.mother(work) : work));
+  for(int i = 0; i < work.size() - 2; i ++)
+    work[i] = move(work[i + 1]);
+  work[work.size() - 2] = work[work.size() - 1];
+  if(stat <= cache.size()) {
+    const auto cat(crush<T>(cache, cache[0].size(), false, 0));
+    pp = vector<Vec>();
+    pp.reserve(cat.size());
+    for(int i = 0; i < cat.size(); i ++) {
+      if(cat[i].first.size() <= pc.rows()) continue;
+      vector<Vec> pw;
+      pw.reserve(cat[i].first.size());
+      for(int j = 0; j < cat[i].first.size(); j ++)
+        pw.emplace_back(makeProgramInvariant<T>(cat[i].first[j] / M));
+      pp.emplace_back(linearInvariant<T>(pw));
     }
+    cache.erase(cache.begin());
   }
   T MM(0);
   T res(0);
-  if(M == T(0)) return res;
   const auto vdp(makeProgramInvariant<T>(
     pc * (dec ? decompose.mother(work) : work) / M));
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
     if(! p.size()) continue;
-    const auto vdps(vdp.dot(p) / sqrt(vdp.dot(vdp) * p.dot(p)));
+    const auto vdps((vdp.dot(p) - vdp[pc.rows() - 1] * p[pc.rows() - 1]) / sqrt(vdp.dot(vdp) * p.dot(p)));
     if(! isfinite(vdps)) continue;
     if(MM < abs(vdps) && p[work.size()] != T(0)) {
-      const auto p0((p.dot(vdp) - p[p.size() - 1] * vdp[p.size() - 1]) / p[p.size() - 1]);
+      const auto p0((p.dot(vdp) - p[pc.rows() - 1] * vdp[pc.rows() - 1]) / p[pc.rows() - 1]);
       const auto v((atan(p0) * T(4) / atan(T(1)) - T(1)) * M);
       if(v != T(0)) {
         MM  = abs(vdps);

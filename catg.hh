@@ -321,7 +321,7 @@ template <typename T, bool dec> inline P012L<T,dec>::~P012L() {
 }
 
 template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
-  if(M < abs(in)) M = abs(in) * T(2);
+  if(M < abs(in) * T(2)) M = abs(in) * T(4);
   if(work[min(max(0, t - 1), work.size() - 1)] == in) return T(0);
   if(t ++ < work.size() - 1) {
     work[(t - 1) % work.size()] = in;
@@ -330,18 +330,19 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   Decompose<T> decompose(work.size());
   if(work[work.size() - 2] != in) {
     work[work.size() - 1] = in;
-    cache.emplace_back(dec ? decompose.mother(work) : work);
-    for(int i = 0; i < work.size() - 1; i ++)
-      work[i] = work[i + 1];
+    cache.emplace_back(pc * (dec ? decompose.mother(work) : work));
+    for(int i = 0; i < work.size() - 2; i ++)
+      work[i] = move(work[i + 1]);
+    work[work.size() - 2] = work[work.size() - 1];
     if(stat <= cache.size()) {
-      const auto cat(crush<T>(cache, work.size(), false));
+      const auto cat(crush<T>(cache, cache[0].size(), false));
       pp = vector<Vec>();
       pp.reserve(cat.size());
       for(int i = 0; i < cat.size(); i ++) {
         if(cat[i].first.size() <= pc.rows()) continue;
         vector<Vec> pw;
         for(int j = 0; j < cat[i].first.size(); j ++)
-          pw.emplace_back(makeProgramInvariant<T>(pc * cat[i].first[j] / M));
+          pw.emplace_back(makeProgramInvariant<T>(cat[i].first[j] / M));
         pp.emplace_back(linearInvariant<T>(pw));
       }
       cache.erase(cache.begin());
@@ -351,8 +352,9 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   T res(0);
   if(M == T(0)) return res;
   auto worki(work);
-  for(int i = 0; i < worki.size() - 1; i ++)
-    worki[i] = worki[i + 1];
+  for(int i = 0; i < worki.size() - 2; i ++)
+    worki[i] = move(worki[i + 1]);
+  worki[worki.size() - 2] = worki[worki.size() - 1];
   const auto vdp(makeProgramInvariant<T>(
     pc * (dec ? decompose.mother(worki) : worki) / M));
   for(int i = 0; i < pp.size(); i ++) {

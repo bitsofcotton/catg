@@ -279,7 +279,7 @@ public:
   typedef SimpleVector<T> Vec;
   typedef SimpleMatrix<T> Mat;
   inline P012L();
-  inline P012L(const int& stat, const int& d, const int& comp);
+  inline P012L(const int& stat, const int& d, const int& comp0 = 0);
   inline ~P012L();
   T next(const T& in);
 private:
@@ -296,10 +296,21 @@ template <typename T, bool dec> inline P012L<T,dec>::P012L() {
   M = T(t = stat = 0);
 }
 
-template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& stat, const int& d, const int& comp) {
+template <typename T, bool dec> inline P012L<T,dec>::P012L(const int& stat, const int& d, const int& comp0) {
   work.resize(d);
   cache.reserve(this->stat = stat);
   M = T(t = 0);
+  assert(0 <= comp0);
+  auto comp(comp0);
+  if(! comp) {
+    T tmp(work.size() + 1);
+    while(true) {
+      tmp  /= T(2);
+      if(tmp < T(1)) break;
+      tmp   = ceil(tmp);
+      comp += int(tmp);
+    }
+  }
   pc = Mat(comp, d);
   for(int i = 0; i < pc.rows() - 1; i ++) {
     const auto work(taylor(pc.cols() - 1, T(1) / T(pc.rows() - 2) * T(pc.cols() - 2)));
@@ -335,12 +346,13 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
       work[i] = move(work[i + 1]);
     work[work.size() - 2] = work[work.size() - 1];
     if(stat <= cache.size()) {
-      const auto cat(crush<T>(cache, cache[0].size(), false));
+      const auto cat(crush<T>(cache, cache[0].size(), false, cache.size() / pc.rows()));
       pp = vector<Vec>();
       pp.reserve(cat.size());
       for(int i = 0; i < cat.size(); i ++) {
         if(cat[i].first.size() <= pc.rows()) continue;
         vector<Vec> pw;
+        pw.reserve(cat[i].first.size());
         for(int j = 0; j < cat[i].first.size(); j ++)
           pw.emplace_back(makeProgramInvariant<T>(cat[i].first[j] / M));
         pp.emplace_back(linearInvariant<T>(pw));
@@ -351,19 +363,15 @@ template <typename T, bool dec> inline T P012L<T,dec>::next(const T& in) {
   T MM(0);
   T res(0);
   if(M == T(0)) return res;
-  auto worki(work);
-  for(int i = 0; i < worki.size() - 2; i ++)
-    worki[i] = move(worki[i + 1]);
-  worki[worki.size() - 2] = worki[worki.size() - 1];
   const auto vdp(makeProgramInvariant<T>(
-    pc * (dec ? decompose.mother(worki) : worki) / M));
+    pc * (dec ? decompose.mother(work) : work) / M));
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
     if(! p.size()) continue;
     const auto vdps(vdp.dot(p) / sqrt(vdp.dot(vdp) * p.dot(p)));
     if(! isfinite(vdps)) continue;
     if(MM < abs(vdps) && p[work.size()] != T(0)) {
-      const auto p0((p.dot(vdp) - p[work.size()] * vdp[work.size()]) / p[work.size()]);
+      const auto p0((p.dot(vdp) - p[p.size() - 1] * vdp[p.size() - 1]) / p[p.size() - 1]);
       const auto v((atan(p0) * T(4) / atan(T(1)) - T(1)) * M);
       if(v != T(0)) {
         MM  = abs(vdps);

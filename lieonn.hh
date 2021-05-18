@@ -2647,21 +2647,6 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::QR() const {
 }
 
 template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
-  if(cols() < rows()) {
-    auto res(((* this) * this->transpose().SVD()).transpose());
-    vector<int> residue;
-    residue.reserve(res.rows());
-    for(int i = 0; i < res.rows(); i ++) {
-      const auto r2(res.row(i).dot(res.row(i)));
-      if(epsilon < r2)
-        res.row(i) /= sqrt(r2);
-      else
-        residue.emplace_back(i);
-    }
-    if(residue.size())
-      return res.fillP(residue);
-    return res;
-  }
   auto s((*this) * this->transpose());
   auto left(s);
   left.O();
@@ -2680,20 +2665,19 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
     ssb = ss.solve(ssb);
     for(int j = 0; j < ssb.size(); j ++)
       left(i, j + i) = ssb[j];
-    // XXX: get better orthogonality??
     const auto n2(left.row(i).dot(left.row(i)));
     if(n2 <= epsilon)
-     fill.emplace_back(i);
+      fill.emplace_back(i);
     else {
-     left.row(i) /= sqrt(n2);
-     // O(mn), symmetric.
-     const auto orth0(s * left.row(i));
-     for(int j = 0; j < s.rows(); j ++)
-       s.row(j) -= orth0;
-     // both side.
-     const auto orth1(s * left.row(i));
-     for(int j = 0; j < s.cols(); j ++)
-       s.setCol(j, s.col(j) - orth1);
+      left.row(i) /= sqrt(n2);
+      // O(mn), symmetric.
+      const auto orth0(s * left.row(i));
+      for(int j = 0; j < s.rows(); j ++)
+        s.row(j) -= orth0;
+      // both side.
+      const auto orth1(s.transpose() * left.row(i));
+      for(int j = 0; j < s.cols(); j ++)
+        s.setCol(j, s.col(j) - orth1);
     }
   }
   // left right bottom 2x2 solve:
@@ -2702,7 +2686,7 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
     left(left.rows() - 1, left.cols() - 1) = cos(theta);
   left(left.rows() - 2, left.cols() - 1) =
     - (left(left.rows() - 1, left.cols() - 2) = sin(theta));
-  return left.fillP(fill);
+  return left.fillP(fill).subMatrix(0, 0, min(rows(), cols()), rows());
 }
 
 template <typename T> inline pair<pair<SimpleMatrix<T>, SimpleMatrix<T> >, SimpleMatrix<T> > SimpleMatrix<T>::SVD(const SimpleMatrix<T>& src) const {

@@ -2680,6 +2680,7 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
     ssb = ss.solve(ssb);
     for(int j = 0; j < ssb.size(); j ++)
       left(i, j + i) = ssb[j];
+    // XXX: get better orthogonality??
     const auto n2(left.row(i).dot(left.row(i)));
     if(n2 <= epsilon)
      fill.emplace_back(i);
@@ -2725,11 +2726,12 @@ template <typename T> inline pair<pair<SimpleMatrix<T>, SimpleMatrix<T> >, Simpl
   vector<int> fill;
   fill.reserve(d.size());
   for(int i = 0; i < d.size(); i ++) {
-    d[i] = sqrt(Qt.row(i).dot(Qt.row(i)));
-    if(d[i] <= epsilon)
+    d[i] = Qt.row(i).dot(Qt.row(i));
+    if(d[i] <= epsilon) {
       fill.emplace_back(i);
-    else
-      Qt.row(i) /= d[i];
+      d[i] = sqrt(d[i]);
+    } else
+      Qt.row(i) /= (d[i] = sqrt(d[i]));
   }
   Qt.fillP(fill);
   const auto D(P * C * Qt.transpose());
@@ -2751,7 +2753,7 @@ template <typename T> inline pair<pair<SimpleMatrix<T>, SimpleMatrix<T> >, Simpl
   fill.reserve(Wt.rows());
   for(int i = 0; i < Wt.rows(); i ++) {
     const auto n2(Wt.row(i).dot(Wt.row(i)));
-    if(n2 <= epsilon * epsilon)
+    if(n2 <= epsilon)
       fill.emplace_back(i);
     else
       Wt.row(i) /= sqrt(n2);
@@ -2762,7 +2764,7 @@ template <typename T> inline pair<pair<SimpleMatrix<T>, SimpleMatrix<T> >, Simpl
   fill.reserve(U2.rows());
   for(int i = 0; i < U2.rows(); i ++) {
     const auto n2(U2.row(i).dot(U2.row(i)));
-    if(n2 <= epsilon * epsilon)
+    if(n2 <= epsilon)
       fill.emplace_back(i);
     else
       U2.row(i) /= sqrt(n2);

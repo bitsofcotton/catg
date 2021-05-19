@@ -2530,16 +2530,18 @@ template <typename T> inline T SimpleMatrix<T>::determinant() const {
     swap(work.entity[i], work.entity[xchg]);
     const auto& ei(work.entity[i]);
     const auto& eii(ei[i]);
+    if(epsilon * ei.dot(ei) < eii * eii) {
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
-    for(int j = i + 1; j < erows; j ++) {
-      const auto ratio(work.entity[j][i] / eii);
-      work.entity[j] -= ei * ratio;
+      for(int j = i + 1; j < erows; j ++) {
+        const auto ratio(work.entity[j][i] / eii);
+        work.entity[j] -= ei * ratio;
+      }
     }
     det *= eii;
   }
-  return isfinite(det) ? det : T(0);
+  return det;
 }
 
 template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::inverse() const {
@@ -2648,13 +2650,24 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::QR() const {
 
 template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
   auto s((*this) * this->transpose());
-  auto left(s);
+  SimpleMatrix<T> left(min(rows(), cols()), s.cols());
   left.O();
-  vector<int> fill;
-  fill.reserve(s.rows());
-  for(int i = 0; i < s.rows() - 2; i ++) {
+  vector<int>  fill;
+  vector<bool> fix;
+  fill.reserve(left.rows());
+  fix.resize(s.rows(), false);
+  for(int i = 0; i < left.rows() - 2; i ++) {
     // N.B. find <s q, q> == ||S||_2.
-    auto ss(s.subMatrix(i, i, s.rows() - i, s.cols() - i));
+    SimpleMatrix<T> ss(s.rows() - i, s.cols() - i);
+    int jj(0);
+    for(int j = 0; j < s.rows(); j ++) if(! fix[j]) {
+      int kk(0);
+      for(int k = 0; k < s.cols(); k ++) if(! fix[k])
+        ss(jj, kk ++) = s(j, k);
+      assert(kk == ss.cols());
+      jj ++;
+    }
+    assert(jj == ss.rows());
     T singular(ss(0, 0));
     for(int j = i; j < ss.rows(); j ++)
       singular += ss(j, j);
@@ -2670,40 +2683,40 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
       fill.emplace_back(i);
     else {
       left.row(i) /= sqrt(n2);
+      const auto& orth(left.row(i));
       // O(mn), symmetric.
-      const auto orth0(s * left.row(i));
       for(int j = 0; j < s.rows(); j ++)
-        s.row(j) -= orth0;
+        s.row(j) -= orth * orth.dot(s.row(j));
       // both side.
-      const auto orth1(s.transpose() * left.row(i));
       for(int j = 0; j < s.cols(); j ++)
-        s.setCol(j, s.col(j) - orth1);
+        s.setCol(j, s.col(j) - orth * orth.dot(s.col(j)));
+      // fixed row col:
+      int fidx(0);
+      for(int j = 0; j < s.rows(); j ++) if(! fix[j]) {
+        fidx = j;
+        break;
+      }
+      for(int j = fidx + 1; j < s.rows(); j ++)
+        if(! fix[j] && s.row(j).dot(s.row(j)) < s.row(fidx).dot(s.row(fidx)))
+          fidx = j;
+      fix[fidx] = true;
     }
   }
   // left right bottom 2x2 solve:
-  const auto theta(atan2(s(s.rows() - 1, s.cols() - 1), s(s.rows() - 1, s.cols() - 1) - s(s.rows() - 1, s.cols() - 2)));
+  const auto theta(atan2(s(left.rows() - 1, left.rows() - 1), s(left.rows() - 1, left.rows() - 1) - s(left.rows() - 1, left.rows() - 2)));
   left(left.rows() - 2, left.cols() - 2) =
     left(left.rows() - 1, left.cols() - 1) = cos(theta);
   left(left.rows() - 2, left.cols() - 1) =
     - (left(left.rows() - 1, left.cols() - 2) = sin(theta));
-  return left.fillP(fill).subMatrix(0, 0, min(rows(), cols()), rows());
+  return left.fillP(fill);
 }
 
 template <typename T> inline pair<pair<SimpleMatrix<T>, SimpleMatrix<T> >, SimpleMatrix<T> > SimpleMatrix<T>::SVD(const SimpleMatrix<T>& src) const {
   // refered from : https://en.wikipedia.org/wiki/Generalized_singular_value_decomposition .
   assert(this->cols() == src.cols());
   SimpleMatrix<T> C(this->rows() + src.rows(), this->cols());
-#if defined(_OPENMP)
-#pragma omp parallel
-#pragma omp for schedule(static, 1)
-#endif
-  for(int i = 0; i < this->rows(); i ++)
-    C.row(i) = this->row(i);
-#if defined(_OPENMP)
-#pragma omp for schedule(static, 1)
-#endif
-  for(int i = 0; i < src.rows(); i ++)
-    C.row(i + this->rows()) = src.row(i);
+  C.setMatrix(0, 0, *this);
+  C.setMatrix(this->rows(), 0, src);
   const auto P(C.SVD());
   SimpleVector<T> d(this->cols());
         auto Qt(P * C);
@@ -3019,8 +3032,10 @@ template <typename T> const SimpleMatrix<complex<T> >& dft(const int& size0) {
     for(int i = 0; i < edft.rows(); i ++) {
       for(int j = 0; j < edft.cols(); j ++) {
         const auto theta(- T(2) * Pi * T(i) * T(j) / T(edft.rows()));
-        edft( i, j) = complex<T>(cos(  theta), sin(  theta));
-        eidft(i, j) = complex<T>(cos(- theta), sin(- theta)) / complex<T>(T(size));
+        const auto c(cos(theta));
+        const auto s(sin(theta));
+        edft( i, j) = complex<T>(c,   s);
+        eidft(i, j) = complex<T>(c, - s) / complex<T>(T(size));
       }
     }
   }

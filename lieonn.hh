@@ -2668,15 +2668,15 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
   for(int i = 0; i < singular.size(); i ++)
     singular[i] = L(i, i) * L(i, i);
   auto Ut(SimpleMatrix<T>(S0.rows(), S0.cols()).O());
-  // get eigen vectors on singular2 with S^2.
+  // get eigen vectors on singular with S.
   vector<int> fill;
   fill.reserve(Ut.rows());
   for(int i = 0; i < Ut.rows(); i ++) {
-    // singular 2 index is same as vanish index.
+    // singular index is same as vanish index.
     auto SS(S);
     SS = S - SS.I(singular[i]);
     const auto work(SimpleMatrix<T>(Ut.cols() - 1, Ut.cols() - 1).O().setMatrix(0, 0, SS.subMatrix(0, 0, i, i)).setMatrix(i, 0, SS.subMatrix(i + 1, 0, SS.rows() - i - 1, i)).setMatrix(0, i, SS.subMatrix(0, i + 1, i, SS.cols() - i - 1)).setMatrix(i, i, SS.subMatrix(i + 1, i + 1, SS.rows() - i - 1, SS.cols() - i - 1)).solve(SimpleVector<T>(Ut.cols() - 1).O().setVector(0, SS.col(i).subVector(0, i)).setVector(i, SS.col(i).subVector(i + 1, SS.rows() - i - 1))));
-    Ut.row(i).setVector(0, work.subVector(0, i)).setVector(i, work.subVector(i, work.size() - i));
+    Ut.row(i).setVector(0, work.subVector(0, i)).setVector(i + 1, work.subVector(i, work.size() - i));
     const auto n2(Ut.row(i).dot(Ut.row(i)));
     if(n2 <= epsilon)
       fill.emplace_back(i);

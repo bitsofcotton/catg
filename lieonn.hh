@@ -2658,16 +2658,15 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::QR() const {
 }
 
 template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
-  // N.B. S0 S0^t == L Q Q^t L^t == L L^t.
-  //      eigen value on L is singular value on S0, S = S0^2.
-  const auto S0(*this * transpose());
-  const auto S0t(S0.transpose());
-  const auto S(S0 * S0t);
-  const auto L(S0 * S0t.QR().transpose());
+  // N.B. S S^t == L Q Q^t L^t == L L^t.
+  //      eigen value on L is sqrt singular value on S.
+  const auto S(*this * transpose());
+  const auto St(S.transpose());
+  const auto L(S * St.QR().transpose());
   SimpleVector<T> singular(min(L.rows(), L.cols()));
   for(int i = 0; i < singular.size(); i ++)
-    singular[i] = L(i, i) * L(i, i);
-  auto Ut(SimpleMatrix<T>(S0.rows(), S0.cols()).O());
+    singular[i] = sqrt(L(i, i));
+  auto Ut(SimpleMatrix<T>(S.rows(), S.cols()).O());
   // get eigen vectors on singular with S.
   vector<int> fill;
   fill.reserve(Ut.rows());

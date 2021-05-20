@@ -2665,10 +2665,11 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
         auto Ut(SimpleMatrix<T>(S.rows(), S.cols()).O());
   vector<int> fill;
   fill.reserve(Ut.rows());
-  // we can boost this function with S = L L^t,
-  //   S - l I == L (I - L^-1 L^-t l) * L^t, since S and Q L is symmetric,
-  //   we can make the part as L^-1 L^-1 l .
-  // but none now.
+  // we can boost this function with
+  //   S = counterI L counterI L compilicated form,
+  // in such case, we should repalce rows by reverse order first,
+  // then, some transpose is needed.
+  //  after all we get (L - lambda I) x == 0 whole.
   for(int i = 0; i < Ut.rows(); i ++) {
     // singular index is same as vanish index.
     auto SS(S);

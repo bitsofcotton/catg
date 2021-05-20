@@ -2666,8 +2666,8 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
   vector<int> fill;
   fill.reserve(Ut.rows());
   // we can boost this function with S = L L^t,
-  //   S - l I == L (I - L^-1 L^-t l) * L^t nor with R,
-  //   S - l I == R (I - R^-1 R^-t l) * R^t.
+  //   S - l I == L (I - L^-1 L^-t l) * L^t, since S and Q L is symmetric,
+  //   we can make the part as L^-1 L^-1 l .
   // but none now.
   for(int i = 0; i < Ut.rows(); i ++) {
     // singular index is same as vanish index.

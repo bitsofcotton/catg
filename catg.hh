@@ -351,7 +351,7 @@ template <typename T, typename feeder, bool dec> inline T P012L<T,feeder,dec>::n
   }
   SimpleVector<T> work(pc.cols());
   for(int i = 0; i < work.size() - 1; i ++)
-    work[i] = d[i - work.size() + d.size() + 1];
+    work[i] = d[i - work.size() + d.size() + 1] / M;
   work[work.size() - 1] = work[work.size() - 2];
   T MM(0);
   T res(0);

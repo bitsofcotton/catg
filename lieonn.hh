@@ -2665,7 +2665,7 @@ template <typename T> inline SimpleMatrix<T> SimpleMatrix<T>::SVD() const {
         auto Ut(SimpleMatrix<T>(S.rows(), S.cols()).O());
   vector<int> fill;
   fill.reserve(Ut.rows());
-  // we can boost this function with
+  // XXX: we can boost this function with
   //   S = counterI L counterI L compilicated form,
   // in such case, we should repalce rows by reverse order first,
   // then, some transpose is needed.
@@ -3132,6 +3132,59 @@ template <typename T> T revertProgramInvariant(const T& in, const bool& index = 
   return atan(in) / atan(T(1)) * T(4) - T(1);
 }
 
+template <typename T> class linearFeeder {
+public:
+  inline linearFeeder() { t = 0; full = false; }
+  inline linearFeeder(const int& size) {
+    res.resize(size);
+    for(int i = 0; i < res.size(); i ++)
+      res[i] = T(0);
+    t = 0;
+    full = false;
+  }
+  inline ~linearFeeder() { ; }
+  inline const SimpleVector<T>& next(const T& in) {
+    for(int i = 0; i < res.size() - 1; i ++)
+      res[i] = move(res[i + 1]);
+    res[res.size() - 1] = in;
+    if(res.size() < t ++) full = true;
+    return res;
+  }
+  SimpleVector<T> res;
+  bool full;
+private:
+  int t;
+};
+
+template <typename T> class arctanFeeder {
+public:
+  inline arctanFeeder() { t = 0; full = false; }
+  inline arctanFeeder(const int& size) {
+    res.resize(size);
+    buf.resize(int(ceil(T(1) / tan(T(1) * atan(T(1)) / T(res.size() - 1)))));
+    for(int i = 0; i < buf.size(); i ++)
+      buf[i] = T(0);
+    for(int i = 0; i < res.size(); i ++)
+      res[i] = T(0);
+    t = 0;
+    full = false;
+  }
+  inline ~arctanFeeder() { ; }
+  inline const SimpleVector<T>& next(const T& in) {
+    for(int i = 0; i < buf.size() - 1; i ++)
+      buf[i] = move(buf[i + 1]);
+    buf[buf.size() - 1] = in;
+    if(buf.size() < t ++) full = true;
+    for(int i = 0; i < res.size(); i ++)
+      res[res.size() - i - 1] = buf[buf.size() - 1 - tan(T(i) * atan(T(1)) / T(res.size() - 1)) / tan(T(1) * atan(T(1)) / T(res.size() - 1))];
+    return res;
+  }
+  SimpleVector<T> res;
+  bool full;
+private:
+  SimpleVector<T> buf;
+  int t;
+};
 
 template <typename T> class SimpleSparseVector {
 public:

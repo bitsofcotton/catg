@@ -296,14 +296,12 @@ template <typename T, typename feeder, bool dec> inline P012L<T,feeder,dec>::P01
   M = T(0);
   assert(0 <= comp0);
   auto comp(comp0);
-  if(! comp) {
-    T tmp(d + 1);
-    while(true) {
-      tmp  /= T(2);
-      if(tmp < T(1)) break;
-      tmp   = ceil(tmp);
-      comp += int(tmp);
-    }
+  T    tmp(d + 1);
+  while(true) {
+    tmp  /= T(2);
+    if(tmp < T(1)) break;
+    tmp   = ceil(tmp);
+    comp += int(tmp);
   }
   pc = Mat(comp, d);
   for(int i = 0; i < pc.rows() - 1; i ++) {

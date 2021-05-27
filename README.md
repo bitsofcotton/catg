@@ -11,19 +11,23 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
       // multiple loop of ins operations.
       in.emplace_back(SimpleVector<double>(/* some size */));
       // in[in.size() - 1] operations.
-    const auto cg(crush<double>(in, /* some size */,
+    const auto cg(crush<double>(in,
+      /* some size (<0 for pairwise left part) */,
       /* is no align */, /* count of blocks? */));
     // cg[/* index */].first  : separated vector itself.
     // cg[/* index */].second : vector pair (align, index).
     const auto cc(crushWithOrder<double>(std::vector<double>(...),
-      /* some size */, /* count of blocks? (<0 for each sorted) */));
+      /* some size (<0 for pairwise left part) */,
+      /* count of blocks? (<0 for each sorted) */));
     // cc[/* index */].first  : divided vector itself.
     // cc[/* index */].second : divided vector indices.
 
 # How to use (commandline)
-    ./catg <status dimension> < data.txt
-    # status dimension < 0 for each sorted divide.
-    # 0 < status dimension for each block divide.
+    ./catg <status dimension> <count> < data.txt
+    # status dimension < 0 for pairwise divide left part.
+    # count <  - 1 for each sorted divide.
+    # count == - 1 for each sorted divide, divide to last one.
+    # count == 0 for divide to last one.
 
 # Description
 We solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times on invariant of makeProgramInvariant.

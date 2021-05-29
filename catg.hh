@@ -200,7 +200,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
     int iidx(sidx.size() - 1);
     for( ; - 1 <= iidx; iidx --)
       if(iidx < 0 || (! sidx[iidx].second.second &&
-        cs + 1 < result[sidx[iidx].second.first].first.size()) )
+        abs(cs) + 1 < result[sidx[iidx].second.first].first.size()) )
         break;
     if(iidx < 0) break;
     const auto& t(sidx[iidx].second.first);
@@ -215,7 +215,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
         (score.first < T(0) ? left : right).emplace_back(move(result[t].first[i]));
         (score.first < T(0) ? lidx : ridx).emplace_back(make_pair(score.second, result[t].second[i].second));
       }
-      if((cs + 1 < left.size() || cs + 1 < right.size()) && left.size() && right.size()) {
+      if((abs(cs) + 1 < left.size() || abs(cs) + 1 < right.size()) && left.size() && right.size()) {
         result[t].first  = move(left);
         result[t].second = move(lidx);
         sidx[iidx].first  = catg.distance;

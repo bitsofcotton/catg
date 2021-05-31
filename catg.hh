@@ -62,16 +62,26 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   this->recur = recur;
   const auto block(recur ? size : 1);
   SimpleMatrix<T> A(in.size() * block, size + 1);
+  const auto tyl(tayl(size, in[0].size()));
+#if defined(_OPENMP)
+#pragma omp parallel
+#pragma omp for schedule(static, 1)
+#endif
+  for(int i = 1; i < in.size(); i ++)
+    assert(in[i].size() == in[0].size());
+#if defined(_OPENMP)
+#pragma omp for schedule(static, 1)
+#endif
   for(int i = 0; i < in.size(); i ++)
     if(recur) {
       Vec inn(in[i].size());
       for(int k = 0; k < size; k ++) {
         for(int j = 0; j < inn.size(); j ++)
           inn[j] = in[i][(j + k * in[i].size() / size) % in[i].size()];
-        A.row(i * size + k) = makeProgramInvariant(inn.size() == size ? inn : tayl(size, inn.size()) * inn);
+        A.row(i * size + k) = makeProgramInvariant(inn.size() == size ? inn : tyl * inn);
       }
     } else
-      A.row(i) = makeProgramInvariant(in[i].size() == size ? in[i] : tayl(size, in[i].size()) * in[i]);
+      A.row(i) = makeProgramInvariant(in[i].size() == size ? in[i] : tyl * in[i]);
         auto Pt(A.QR());
   const auto R(Pt * A);
         Vec  one(Pt.cols());
@@ -119,7 +129,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
     const auto  n2(orth.dot(orth));
     if(n2 <= Pt.epsilon) continue;
 #if defined(_OPENMP)
-#pragma omp parallel for schedule(static, 1)
+#pragma omp for schedule(static, 1)
 #endif
     for(int j = 0; j < Pt.cols(); j ++)
       Pt.setCol(j, Pt.col(j) - orth * Pt.col(j).dot(orth) / n2);
@@ -131,7 +141,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   std::vector<T> s;
   s.reserve(in.size());
   for(int i = 0; i < in.size(); i ++)
-    s.emplace_back(makeProgramInvariant(in[i].size() == size ? in[i] : tayl(size, in[i].size()) * in[i]).dot(cut));
+    s.emplace_back(makeProgramInvariant(in[i].size() == size ? in[i] : tyl * in[i]).dot(cut));
   std::sort(s.begin(), s.end());
   distance = origin = T(0);
   for(int i = 0; i < s.size() - 1; i ++)
@@ -210,6 +220,10 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<pair<int, int
       vector<SimpleVector<T> > right;
       vector<pair<int, int> >  lidx;
       vector<pair<int, int> >  ridx;
+      left.reserve(result[t].first.size());
+      right.reserve(result[t].first.size());
+      lidx.reserve(result[t].first.size());
+      ridx.reserve(result[t].first.size());
       for(int i = 0; i < result[t].first.size(); i ++) {
         const auto score(catg.score(result[t].first[i]));
         (score.first < T(0) ? left : right).emplace_back(move(result[t].first[i]));

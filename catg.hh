@@ -354,7 +354,7 @@ template <typename T, typename feeder, bool dec> inline P012L<T,feeder,dec>::~P0
 
 template <typename T, typename feeder, bool dec> inline T P012L<T,feeder,dec>::next(const T& in) {
   if(f.res[f.res.size() - 1] == in) return T(0);
-  if(M < abs(in) * T(2)) M = abs(in) * T(4);
+  if(M < abs(in) * T(2) * atan(1) * T(pc.cols() + 2)) M = abs(in) * T(4) * atan(1) * T(pc.cols() + 2);
   const auto& d(f.next(in));
   if(! f.full) return T(0);
   vector<SimpleVector<T> > cache;

@@ -65,7 +65,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   for(int i = 0; i < in.size(); i ++)
     tayl(size, in[i].size());
 #if defined(_OPENMP)
-#pragma omp for schedule(static, 1)
+#pragma omp parallel for schedule(static, 1)
 #endif
   for(int i = 0; i < in.size(); i ++)
     if(recur) {
@@ -124,7 +124,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
     const auto  n2(orth.dot(orth));
     if(n2 <= Pt.epsilon) continue;
 #if defined(_OPENMP)
-#pragma omp for schedule(static, 1)
+#pragma omp parallel for schedule(static, 1)
 #endif
     for(int j = 0; j < Pt.cols(); j ++)
       Pt.setCol(j, Pt.col(j) - orth * Pt.col(j).dot(orth) / n2);

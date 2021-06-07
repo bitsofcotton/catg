@@ -143,8 +143,7 @@ template <typename T> typename Decompose<T>::Vec Decompose<T>::prepare(const Vec
   assert(0 < cnt);
   Vec res(size);
 #if defined(_OPENMP)
-#pragma omp parallel
-#pragma omp for schedule(static, 1)
+#pragma omp parallel for schedule(static, 1)
 #endif
   for(int i = 0; i < size; i ++) {
     res[i] = T(0);
@@ -162,7 +161,7 @@ template <typename T> void Decompose<T>::apply(Vec& v, const Vec& dst, const Vec
   const auto cnt(v.size() / size);
   assert(0 < cnt);
 #if defined(_OPENMP)
-#pragma omp for schedule(static, 1)
+#pragma omp parallel for schedule(static, 1)
 #endif
   for(int i = 0; i < size; i ++) {
     const auto ratio(dst[i] - src[i]);
@@ -206,6 +205,8 @@ template <typename T> typename Decompose<T>::Vec Decompose<T>::synth(const Vec& 
 template <typename T> typename Decompose<T>::Mat Decompose<T>::represent(const Mat& img, const int& depth) {
   Mat res0(1, size);
   Mat w00(img.rows() - size * 2, size);
+  const auto int4(diff<T>(- size));
+  const auto int4t(int4.transpose());
   for(int i = size; i < img.rows() - size; i ++) {
     Mat w0(img.cols() - size * 2, size);
     for(int j = size; j < img.cols() - size; j ++) {
@@ -216,7 +217,7 @@ template <typename T> typename Decompose<T>::Mat Decompose<T>::represent(const M
               r += max(1, min(img.rows() / size, img.cols() / size))) {
         // integrate 4th times because we svd 4 times.
         // svd takes bothside transform, we suppose them as differential op.
-        const auto part(diff<T>(- size) * diff<T>(- size) * diff<T>(- size) * diff<T>(- size) * subImage(img, i, j, r) * diff<T>(- size) * diff<T>(- size) * diff<T>(- size) * diff<T>(- size));
+        const auto part(int4 * subImage(img, i, j, r) * int4t);
         const auto left(part.SVD() * part);
               Vec  work(left.rows());
         for(int k = 0; k < work.size(); k ++)

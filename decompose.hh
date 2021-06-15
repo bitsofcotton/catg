@@ -145,29 +145,21 @@ template <typename T> typename Decompose<T>::Vec Decompose<T>::prepare(const Vec
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
-  for(int i = 0; i < size; i ++) {
-    res[i] = T(0);
-    const auto ibegin(i * cnt);
-    const auto iend(min((i + 1) * cnt, int(in.size()) - idx));
-    for(int j = ibegin; j < iend; j ++)
-      res[i] += in[j + idx];
-    res[i] /= T(iend - ibegin);
-  }
+  for(int i = 0; i < size; i ++)
+    res[i] = i * cnt + idx < in.size() ? in[i * cnt + idx] : T(0);
   return res;
 }
 
 template <typename T> void Decompose<T>::apply(Vec& v, const Vec& dst, const Vec& src, const int& idx) const {
-  assert(dst.size() == size && src.size() == size);
+  assert(size && dst.size() == size && src.size() == size);
   const auto cnt(v.size() / size);
   assert(0 < cnt);
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
-  for(int i = 0; i < size; i ++) {
-    const auto ratio(dst[i] - src[i]);
-    for(int j = i * cnt; j < min((i + 1) * cnt, int(v.size()) - idx); j ++)
-      v[j + idx] += ratio;
-  }
+  for(int i = 0; i < size; i ++)
+    if(i * cnt + idx < v.size())
+      v[i * cnt + idx] += dst[i] - src[i];
   return;
 }
 
@@ -205,7 +197,7 @@ template <typename T> typename Decompose<T>::Vec Decompose<T>::synth(const Vec& 
 template <typename T> typename Decompose<T>::Mat Decompose<T>::represent(const Mat& img, const int& depth) {
   Mat res0(1, size);
   Mat w00(img.rows() - size * 2, size);
-  const auto int4(diff<T>(- size));
+  const auto int4(diff<T>(- size) * diff<T>(- size) * diff<T>(- size) * diff<T>(- size));
   const auto int4t(int4.transpose());
   for(int i = size; i < img.rows() - size; i ++) {
     Mat w0(img.cols() - size * 2, size);
@@ -214,7 +206,7 @@ template <typename T> typename Decompose<T>::Mat Decompose<T>::represent(const M
       for(int r = size;
               r < min(min(i, j),
                     min(img.rows() - i - 1, img.cols() - j - 1));
-              r += max(1, min(img.rows() / size, img.cols() / size))) {
+              r += max(int(1), min(img.rows() / size, img.cols() / size))) {
         // integrate 4th times because we svd 4 times.
         // svd takes bothside transform, we suppose them as differential op.
         const auto part(int4 * subImage(img, i, j, r) * int4t);

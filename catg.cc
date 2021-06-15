@@ -7,14 +7,21 @@
 #include <iomanip>
 #include <assert.h>
 
+#if defined(_FLOAT_BITS_)
+#define int int64_t
+#endif
 #include "lieonn.hh"
 typedef myfloat num_t;
-#include <cmath>
-using std::sqrt;
 #include "decompose.hh"
 #include "catg.hh"
 
+#if defined(_FLOAT_BITS_)
+#undef int
+#endif
 int main(int argc, const char* argv[]) {
+#if defined(_FLOAT_BITS_)
+#define int int64_t
+#endif
   std::cout << std::setprecision(30);
   std::string s;
   int  slen(8);

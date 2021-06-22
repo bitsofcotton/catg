@@ -42,13 +42,20 @@ int main(int argc, const char* argv[]) {
   }
   auto cg(crushWithOrder<num_t>(v, slen, count));
   std::cout << cg.size() << "pairs." << std::endl;
+  CatG<num_t> catg;
   for(int t = 0; t < cg.size(); t ++) {
     std::sort(cg[t].second.begin(), cg[t].second.end());
     cg[t].second.erase(std::unique(cg[t].second.begin(), cg[t].second.end()), cg[t].second.end());
     std::cout << cg[t].first.size() << " : " << std::endl;
+    if(cg[t].first.size()) {
+      auto avg(catg.tayl(abs(slen), cg[t].first[0].size()) * cg[t].first[0]);
+      for(int j = 1; j < cg[t].first.size(); j ++)
+        avg += catg.tayl(abs(slen), cg[t].first[j].size()) * cg[t].first[j];
+      std::cout << (avg / num_t(cg[t].first.size()));
+    }
     for(int j = 0; j < cg[t].second.size(); j ++)
       std::cout << cg[t].second[j] << " ";
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
   }
   return 0;
 }

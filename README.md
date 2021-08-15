@@ -6,21 +6,12 @@ There exists support vector machine and so on to categorize vector series.
 So this is another categorizer on vector series. (I didn't searched well, so might be preceding results exist.)
 
 # How to use
-    std::vector<SimpleVector<double> > in;
-    ...
-      // multiple loop of ins operations.
-      in.emplace_back(SimpleVector<double>(/* some size */));
-      // in[in.size() - 1] operations.
-    const auto cg(crush<double>(in,
-      /* some size (<0 for pairwise left part) */,
-      /* is no align */, /* count of blocks? */));
-    // cg[/* index */].first  : separated vector itself.
-    // cg[/* index */].second : vector pair (align, index).
-    const auto cc(crushWithOrder<double>(std::vector<double>(...),
-      /* some size (<0 for pairwise left part) */,
-      /* count of blocks? (<0 for each sorted) */));
-    // cc[/* index */].first  : divided vector itself.
-    // cc[/* index */].second : divided vector indices.
+    const auto cg(crush<double>(std::vector<SimpleVector<double> >(...),
+     or we can do:crushWithOrder<double>(std::vector<double>(...),
+      /* some status size (see below) */,
+      /* count of blocks? (see below) */));
+    // cg[/* index */].first  : divided vector itself.
+    // cg[/* index */].second : divided vector indices.
 
 # How to use (commandline)
     ./catg <status dimension> <count> < data.txt

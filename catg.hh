@@ -104,7 +104,9 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
 #endif
     for(int j = 0; j < Pt.cols(); j ++)
       Pt.setCol(j, Pt.col(j) - orth * Pt.col(j).dot(orth) / n2);
-    fix[size0 < 0 ? pidx[iidx] : iidx] = true;
+    fix[iidx] = true;
+    if(size0 < 0)
+      fix[pidx[iidx]] = true;
   }
   cut = R.solve(Pt * one);
   std::vector<T> s;

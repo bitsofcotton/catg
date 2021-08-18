@@ -13,7 +13,6 @@
 #endif
 #include "lieonn.hh"
 typedef myfloat num_t;
-#include "decompose.hh"
 #include "catg.hh"
 
 #if defined(_FLOAT_BITS_)

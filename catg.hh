@@ -266,7 +266,7 @@ template <typename T> static inline vector<pair<vector<SimpleVector<T> >, vector
   return crushWithOrder<T>(v, cs, max(int(2), int(sqrt(T(v.size())))));
 }
 
-template <typename T, typename feeder, bool dec = true> class P012L {
+template <typename T, typename feeder> class P012L {
 public:
   typedef SimpleVector<T> Vec;
   typedef SimpleMatrix<T> Mat;
@@ -281,31 +281,32 @@ private:
   T   M;
 };
 
-template <typename T, typename feeder, bool dec> inline P012L<T,feeder,dec>::P012L() {
+template <typename T, typename feeder> inline P012L<T,feeder>::P012L() {
   M = T(varlen = 0);
 }
 
-template <typename T, typename feeder, bool dec> inline P012L<T,feeder,dec>::P012L(const int& stat, const int& var) {
+template <typename T, typename feeder> inline P012L<T,feeder>::P012L(const int& stat, const int& var) {
   M = T(0);
   assert(0 < stat && 1 < var);
   f = feeder(stat + (varlen = var) - 1);
 }
 
-template <typename T, typename feeder, bool dec> inline P012L<T,feeder,dec>::~P012L() {
+template <typename T, typename feeder> inline P012L<T,feeder>::~P012L() {
   ;
 }
 
-template <typename T, typename feeder, bool dec> inline T P012L<T,feeder,dec>::next(const T& in) {
+template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& in) {
   if(f.res[f.res.size() - 1] == in) return T(0);
+  for(int i = 0; i < f.res.size(); i ++)
+    if(! isfinite(f.res[i])) return T(0);
   if(M < abs(in) * T(4) * T(varlen) * atan(T(1)) * T(varlen + 2)) M = abs(in) * T(8 * varlen) * atan(T(1)) * T(varlen + 2);
   const auto d(f.next(in));
   if(! f.full) return T(0);
   vector<SimpleVector<T> > cache;
   cache.reserve(d.size() - varlen + 1);
-  Decompose<T> decompose(varlen);
   for(int i = 0; i <= d.size() - varlen; i ++) {
     auto w(d.subVector(i, varlen) / M);
-    cache.emplace_back(dec ? decompose.mother(move(w)) : move(w));
+    cache.emplace_back(move(w));
   }
   const auto cat(crush<T>(cache, cache[0].size(), 0));
   pp = vector<Vec>();
@@ -323,8 +324,7 @@ template <typename T, typename feeder, bool dec> inline T P012L<T,feeder,dec>::n
   work[work.size() - 1] = work[work.size() - 2];
   T MM(0);
   T res(0);
-  const auto vdp(makeProgramInvariant<T>(
-    dec ? decompose.mother(work) : work));
+  const auto vdp(makeProgramInvariant<T>(work));
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i]);
     if(! p.size()) continue;
@@ -338,7 +338,7 @@ template <typename T, typename feeder, bool dec> inline T P012L<T,feeder,dec>::n
       }
     }
   }
-  return res * M;
+  return res * M * f.r;
 }
 
 #define _CATG_

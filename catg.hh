@@ -274,19 +274,17 @@ public:
   inline P012L(const int& stat, const int& d);
   inline ~P012L();
   T next(const T& in);
+  feeder f;
 private:
   vector<Vec> pp;
-  feeder f;
   int varlen;
-  T   M;
 };
 
 template <typename T, typename feeder> inline P012L<T,feeder>::P012L() {
-  M = T(varlen = 0);
+  T(varlen = 0);
 }
 
 template <typename T, typename feeder> inline P012L<T,feeder>::P012L(const int& stat, const int& var) {
-  M = T(0);
   assert(0 < stat && 1 < var);
   f = feeder(stat + (varlen = var) - 1);
 }
@@ -296,12 +294,14 @@ template <typename T, typename feeder> inline P012L<T,feeder>::~P012L() {
 }
 
 template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& in) {
-  if(f.res[f.res.size() - 1] == in) return T(0);
-  for(int i = 0; i < f.res.size(); i ++)
-    if(! isfinite(f.res[i])) return T(0);
-  if(M < abs(in) * T(4) * T(varlen) * atan(T(1)) * T(varlen + 2)) M = abs(in) * T(8 * varlen) * atan(T(1)) * T(varlen + 2);
   const auto d(f.next(in));
-  if(! f.full) return T(0);
+        T    M(0);
+  for(int i = 0; i < d.size(); i ++)
+    M = max(M, abs(d[i]));
+  M *= T(2);
+  if(! f.full || M <= T(0)) return in;
+  for(int i = 0; i < d.size(); i ++)
+    if(! isfinite(d[i])) return in;
   vector<SimpleVector<T> > cache;
   cache.reserve(d.size() - varlen + 1);
   for(int i = 0; i <= d.size() - varlen; i ++) {
@@ -338,7 +338,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
       }
     }
   }
-  return res * M * f.r;
+  return res * M;
 }
 
 #define _CATG_

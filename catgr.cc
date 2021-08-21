@@ -27,12 +27,12 @@ int main(int argc, const char* argv[]) {
   int  slen(8);
   int  count(0);
   if(argc < 2)
-    std::cerr << "catg <status dimension>? <divide count>?" << std::endl;
+    std::cerr << "catgr <status dimension>? <divide count>?" << std::endl;
   else {
     if(1 < argc) slen  = std::atoi(argv[1]);
     if(2 < argc) count = std::atoi(argv[2]);
   }
-  std::cerr << "continue with catg " << slen << " " << count << std::endl;
+  std::cerr << "continue with catgr " << slen << " " << count << std::endl;
   std::vector<SimpleVector<num_t> > v;
   SimpleVector<num_t> buf(abs(slen));
   int t(0);

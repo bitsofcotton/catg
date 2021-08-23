@@ -296,7 +296,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   cache.reserve(d.size() - varlen + 1);
   for(int i = 0; i <= d.size() - varlen; i ++)
     cache.emplace_back(d.subVector(i, varlen) / M);
-  const auto cat(crush<T>(cache, cache[0].size(), 0));
+  const auto cat(crush<T>(cache, cache[0].size()));
   pp = vector<Vec>();
   pp.reserve(cat.size());
   for(int i = 0; i < cat.size(); i ++) {

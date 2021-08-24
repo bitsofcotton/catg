@@ -223,6 +223,10 @@ template <typename T> static inline vector<pair<vector<SimpleVector<T> >, vector
   return crush<T>(v, cs, max(int(2), int(sqrt(T(v.size())))));
 }
 
+template <typename T> static inline vector<pair<vector<SimpleVector<T> >, vector<int> > > crush(const vector<SimpleVector<T> >& v) {
+  return crush<T>(v, v[0].size());
+}
+
 template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crushWithOrder(const vector<T>& v, const int& cs, const int& count) {
   vector<SimpleVector<T> > work;
   vector<int> edge;
@@ -279,7 +283,7 @@ public:
   T next(const T& in);
   feeder f;
 private:
-  vector<Vec> pp;
+  vector<pair<Vec, Vec> > pp;
   int varlen;
 };
 
@@ -297,14 +301,19 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   for(int i = 0; i <= d.size() - varlen; i ++)
     cache.emplace_back(d.subVector(i, varlen) / M);
   const auto cat(crush<T>(cache, cache[0].size()));
-  pp = vector<Vec>();
+  pp = vector<pair<Vec, Vec> >();
   pp.reserve(cat.size());
   for(int i = 0; i < cat.size(); i ++) {
-    if(cat[i].first.size() <= varlen + 1) continue;
+    if(! cat[i].first.size()) continue;
     Mat pw(cat[i].first.size(), cat[i].first[0].size() + 2);
     for(int j = 0; j < cat[i].first.size(); j ++)
       pw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first;
-    pp.emplace_back(linearInvariant<T>(pw));
+    auto avg(pw.row(0));
+    for(int i = 1; i < pw.rows(); i ++)
+      avg += pw.row(i);
+    avg /= T(pw.rows());
+    pp.emplace_back(make_pair(cat[i].first.size() < cat[i].first[0].size() + 2
+      ? Vec() : linearInvariant<T>(pw), avg));
   }
   SimpleVector<T> work(varlen);
   for(int i = 0; i < work.size() - 1; i ++)
@@ -314,15 +323,14 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   T res(0);
   const auto vdp(makeProgramInvariant<T>(work));
   for(int i = 0; i < pp.size(); i ++) {
-    const auto& p(pp[i]);
-    if(! p.size()) continue;
-    const auto vdps((vdp.first.dot(p) - vdp.first[varlen - 1] * p[varlen - 1]) / sqrt(vdp.first.dot(vdp.first) * p.dot(p)));
-    if(! isfinite(vdps)) continue;
-    if(MM < abs(vdps) && p[work.size()] != T(0)) {
-      MM  = abs(vdps);
-      res = revertProgramInvariant<T>(make_pair(
-        (p.dot(vdp.first) - p[varlen - 1] * vdp.first[varlen - 1]) /
-          p[varlen - 1], vdp.second));
+    const auto& p(pp[i].second);
+    const auto  orth(vdp.first.dot(p) / sqrt(vdp.first.dot(vdp.first) * p.dot(p)));
+    if(MM < orth) {
+      const auto& q(pp[i].first);
+      res = q.size() ? revertProgramInvariant<T>(make_pair(
+          (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
+            q[varlen - 1], vdp.second))
+        : work[work.size() - 1];
     }
   }
   return res * M;

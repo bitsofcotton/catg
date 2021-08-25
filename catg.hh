@@ -67,7 +67,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   const auto R(Pt * A);
         Vec  one(Pt.cols());
   SimpleVector<bool> fix(one.size());
-  one.I(T(1));
+  one.I(T(int(1)));
   fix.I(false);
   const auto on(Pt.projectionPt(one));
   vector<pair<T, int> > fidx;
@@ -82,7 +82,7 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
       T score(0);
       for(int j = 0; j < in.size(); j ++) {
         const auto lscore(abs(on[i] + on[j]));
-        if(score == T(0) || lscore < score) {
+        if(score == T(int(0)) || lscore < score) {
           score = lscore;
           pidx[i] = j;
         }
@@ -114,11 +114,11 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   for(int i = 0; i < in.size(); i ++)
     s.emplace_back(makeProgramInvariant(tayl(size, in[i].size()) * in[i]).first.dot(cut));
   std::sort(s.begin(), s.end());
-  distance = origin = T(0);
+  distance = origin = T(int(0));
   for(int i = 0; i < s.size() - 1; i ++)
     if(distance <= s[i + 1] - s[i]) {
       distance =  s[i + 1] - s[i];
-      origin   = (s[i + 1] + s[i]) / T(2);
+      origin   = (s[i + 1] + s[i]) / T(int(2));
     }
   return;
 }
@@ -150,7 +150,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
   auto MM(v[0].dot(v[0]));
   for(int i = 1; i < v.size(); i ++)
     MM = max(MM, v[i].dot(v[i]));
-  MM = sqrt(MM) * T(2);
+  MM = sqrt(MM) * T(int(2));
   int t(0);
   result.emplace_back(pair<vector<SimpleVector<T> >, vector<int> >());
   result[0].first.reserve(v.size());
@@ -160,7 +160,7 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
     result[0].second.emplace_back(i);
   }
   vector<pair<T, pair<int, bool> > > sidx;
-  sidx.emplace_back(make_pair(T(0), make_pair(0, false)));
+  sidx.emplace_back(make_pair(T(int(0)), make_pair(0, false)));
   while(sidx.size() < (count ? count : v.size())) {
     sort(sidx.begin(), sidx.end());
     int iidx(sidx.size() - 1);
@@ -182,8 +182,8 @@ template <typename T> vector<pair<vector<SimpleVector<T> >, vector<int> > > crus
       ridx.reserve(result[t].first.size());
       for(int i = 0; i < result[t].first.size(); i ++) {
         const auto score(catg.score(result[t].first[i]));
-        (score < T(0) ? left : right).emplace_back(move(result[t].first[i]));
-        (score < T(0) ? lidx : ridx).emplace_back(result[t].second[i]);
+        (score < T(int(0)) ? left : right).emplace_back(move(result[t].first[i]));
+        (score < T(int(0)) ? lidx : ridx).emplace_back(result[t].second[i]);
       }
       if((abs(cs) + 1 < left.size() || abs(cs) + 1 < right.size()) && left.size() && right.size()) {
         if(left.size() < right.size()) {
@@ -292,10 +292,10 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
         T    M(0);
   for(int i = 0; i < d.size(); i ++) {
     M = max(M, abs(d[i]));
-    if(! isfinite(d[i])) return in;
+    if(! isfinite(d[i])) return T(0);
   }
-  M *= T(2);
-  if(! f.full || M <= T(0)) return in;
+  M *= T(int(2));
+  if(! f.full || M <= T(int(0))) return T(0);
   vector<SimpleVector<T> > cache;
   cache.reserve(d.size() - varlen + 1);
   for(int i = 0; i <= d.size() - varlen; i ++)
@@ -333,7 +333,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
         : work[work.size() - 1];
     }
   }
-  return res * M;
+  return (res - work[work.size() - 1]) * M;
 }
 
 #define _CATG_

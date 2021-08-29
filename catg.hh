@@ -275,9 +275,10 @@ public:
   typedef SimpleVector<T> Vec;
   typedef SimpleMatrix<T> Mat;
   inline P012L() { varlen = 0; }
-  inline P012L(const int& stat, const int& var) {
+  inline P012L(const int& stat, const int& var, const int& step = 1) {
     assert(0 < stat && 1 < var);
     f = feeder(stat + (varlen = var) - 1);
+    this->step = step;
   }
   inline ~P012L() { ; }
   T next(const T& in);
@@ -285,6 +286,7 @@ public:
 private:
   vector<pair<Vec, Vec> > pp;
   int varlen;
+  int step;
 };
 
 template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& in) {
@@ -298,8 +300,10 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   if(! f.full || M <= T(int(0))) return T(0);
   vector<SimpleVector<T> > cache;
   cache.reserve(d.size() - varlen + 1);
-  for(int i = 0; i <= d.size() - varlen; i ++)
+  for(int i = 0; i < d.size() - varlen - step + 1; i ++) {
     cache.emplace_back(d.subVector(i, varlen) / M);
+    cache[cache.size() - 1][cache[cache.size() - 1].size() - 1] = d[i + varlen + step - 1] / M;
+  }
   const auto cat(crush<T>(cache, cache[0].size()));
   pp = vector<pair<Vec, Vec> >();
   pp.reserve(cat.size());

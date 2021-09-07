@@ -323,7 +323,6 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     work[i] = d[i - work.size() + d.size() + 1] / M;
   work[work.size() - 1] = work[work.size() - 2];
   T MM(0);
-  T res(0);
   const auto vdp(makeProgramInvariant<T>(work));
   int ii(0);
   for(int i = 0; i < pp.size(); i ++) {
@@ -338,8 +337,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     linearInvariant<T>(pp[ii].first));
   return (q.size() ? revertProgramInvariant<T>(make_pair(
           - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
-              q[varlen - 1], vdp.second))
-          : work[work.size() - 1]) * M;
+              q[varlen - 1], vdp.second)) : T(0)) * M;
 }
 
 #define _CATG_

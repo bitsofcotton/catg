@@ -284,7 +284,6 @@ public:
   T next(const T& in);
   feeder f;
 private:
-  vector<pair<Vec, Vec> > pp;
   int varlen;
   int step;
 };
@@ -305,7 +304,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     cache[cache.size() - 1][cache[cache.size() - 1].size() - 1] = d[i + varlen + step - 1] / M;
   }
   const auto cat(crush<T>(cache, cache[0].size(), cache.size() / min(int(sqrt(T(int(cache.size())))), cache[0].size() * cache[0].size())));
-  pp = vector<pair<Vec, Vec> >();
+  vector<pair<Mat, Vec> > pp;
   pp.reserve(cat.size());
   for(int i = 0; i < cat.size(); i ++) {
     if(! cat[i].first.size()) continue;
@@ -317,7 +316,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
       avg += pw.row(i);
     avg /= T(pw.rows());
     pp.emplace_back(make_pair(cat[i].first.size() < cat[i].first[0].size() + 2
-      ? Vec() : linearInvariant<T>(pw), avg));
+      ? Mat() : move(pw), move(avg)));
   }
   SimpleVector<T> work(varlen);
   for(int i = 0; i < work.size() - 1; i ++)
@@ -326,18 +325,21 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   T MM(0);
   T res(0);
   const auto vdp(makeProgramInvariant<T>(work));
+  int ii(0);
   for(int i = 0; i < pp.size(); i ++) {
     const auto& p(pp[i].second);
     const auto  orth(vdp.first.dot(p) / sqrt(vdp.first.dot(vdp.first) * p.dot(p)));
     if(MM < orth) {
-      const auto& q(pp[i].first);
-      res = q.size() ? revertProgramInvariant<T>(make_pair(
-          - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
-              q[varlen - 1], vdp.second))
-        : work[work.size() - 1];
+      ii = i;
+      MM = orth;
     }
   }
-  return (res - work[work.size() - 1]) * M;
+  const auto q(pp[ii].first.rows() <= 0 ? Vec() :
+    linearInvariant<T>(pp[ii].first));
+  return (q.size() ? revertProgramInvariant<T>(make_pair(
+          - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
+              q[varlen - 1], vdp.second))
+          : work[work.size() - 1]) * M;
 }
 
 #define _CATG_

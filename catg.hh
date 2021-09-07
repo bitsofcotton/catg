@@ -304,7 +304,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     cache.emplace_back(d.subVector(i, varlen) / M);
     cache[cache.size() - 1][cache[cache.size() - 1].size() - 1] = d[i + varlen + step - 1] / M;
   }
-  const auto cat(crush<T>(cache, cache[0].size()));
+  const auto cat(crush<T>(cache, cache[0].size(), cache.size() / min(int(sqrt(T(int(cache.size())))), cache[0].size() * cache[0].size())));
   pp = vector<pair<Vec, Vec> >();
   pp.reserve(cat.size());
   for(int i = 0; i < cat.size(); i ++) {

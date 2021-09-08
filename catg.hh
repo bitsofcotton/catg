@@ -311,9 +311,10 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   const auto vdp(makeProgramInvariant<T>(work));
         Mat  pw;
         T    MM(0);
+        Vec  gavg;
   for(int i = 0; i < cat.size(); i ++) {
-    if(! cat[i].first.size() ||
-         cat[i].first.size() <= cat[i].first[0].size() + 2) continue;
+    // XXX: how to handle the illegal value.
+    if(! cat[i].first.size()) continue;
     Mat lpw(cat[i].first.size(), cat[i].first[0].size() + 2);
     Vec avg(Vec(lpw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
     for(int j = 1; j < lpw.rows(); j ++)
@@ -322,9 +323,17 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     if(abs(MM) < abs(score)) {
       pw = move(lpw);
       MM = move(score);
+      gavg = move(avg);
     }
   }
-  if(pw.rows() <= pw.cols() || ! pw.rows()) return T(0);
+  if(pw.rows() <= pw.cols() || ! pw.rows()) {
+    if(gavg.size() < work.size()) return T(0);
+    return (revertProgramInvariant<T>(make_pair(
+              gavg[work.size() - 1], vdp.second)) -
+            revertProgramInvariant<T>(make_pair(
+              gavg[work.size() - 2], vdp.second)) ) *
+           M * (MM < T(0) ? - T(1) : T(1));
+  }
   const auto q(linearInvariant<T>(pw));
   return revertProgramInvariant<T>(make_pair(
            - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /

@@ -309,35 +309,30 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     work[i] = d[i - work.size() + d.size() + 1] / M;
   work[work.size() - 1] = work[work.size() - 2];
   const auto vdp(makeProgramInvariant<T>(work));
-        Mat  pw;
-        T    MM(0);
-        Vec  gavg;
+        T    res(0);
+        T    sscore(0);
   for(int i = 0; i < cat.size(); i ++) {
     // XXX: how to handle the illegal value.
     if(! cat[i].first.size()) continue;
-    Mat lpw(cat[i].first.size(), cat[i].first[0].size() + 2);
-    Vec avg(Vec(lpw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
-    for(int j = 1; j < lpw.rows(); j ++)
-      avg += (lpw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first);
+    Mat pw(cat[i].first.size(), cat[i].first[0].size() + 2);
+    Vec avg(Vec(pw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
+    for(int j = 1; j < pw.rows(); j ++)
+      avg += (pw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first);
     auto score(vdp.first.dot(avg) / T(cat[i].first.size()));
-    if(abs(MM) < abs(score)) {
-      pw = move(lpw);
-      MM = move(score);
-      gavg = move(avg);
+    if(pw.rows() <= pw.cols() || ! pw.rows())
+      res += (revertProgramInvariant<T>(make_pair(
+                avg[work.size() - 1], vdp.second)) -
+              revertProgramInvariant<T>(make_pair(
+                avg[work.size() - 2], vdp.second)) ) * score;
+    else {
+      const auto q(linearInvariant<T>(pw));
+      res += revertProgramInvariant<T>(make_pair(
+              - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
+               q[varlen - 1], vdp.second)) * score;
     }
+    sscore += score;
   }
-  if(pw.rows() <= pw.cols() || ! pw.rows()) {
-    if(gavg.size() < work.size()) return T(0);
-    return (revertProgramInvariant<T>(make_pair(
-              gavg[work.size() - 1], vdp.second)) -
-            revertProgramInvariant<T>(make_pair(
-              gavg[work.size() - 2], vdp.second)) ) *
-           M * (MM < T(0) ? - T(1) : T(1));
-  }
-  const auto q(linearInvariant<T>(pw));
-  return revertProgramInvariant<T>(make_pair(
-           - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
-              q[varlen - 1], vdp.second)) * M * (MM < T(0) ? - T(1) : T(1));
+  return res * M / sscore;
 }
 
 #define _CATG_

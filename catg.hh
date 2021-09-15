@@ -330,7 +330,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
               - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1]) /
                q[varlen - 1], vdp.second)) * score;
     }
-    sscore += score;
+    sscore += abs(score);
   }
   return res * M / sscore;
 }

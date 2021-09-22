@@ -323,7 +323,8 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     work[work.size() - 1] = zero;
     res += work[work.size() - 1] = score * (q.size()
       ? revertProgramInvariant<T>(make_pair(
-          - q.dot(vdp.first) / q[varlen - 1], vdp.second)) : T(0));
+          - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1])
+          / q[varlen - 1], vdp.second)) : T(0));
     sscore += abs(score);
   }
   return res * M / sscore;

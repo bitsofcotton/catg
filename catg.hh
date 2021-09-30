@@ -292,8 +292,8 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   const auto d(f.next(in));
         auto M(zero);
   for(int i = 0; i < d.size(); i ++) {
-    M = max(M, abs(d[i]));
     if(! isfinite(d[i])) return zero;
+    M = max(M, abs(d[i]));
   }
   M *= T(int(2));
   if(! f.full || M <= zero) return zero;
@@ -324,7 +324,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     res += work[work.size() - 1] = score * (q.size()
       ? revertProgramInvariant<T>(make_pair(
           - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1])
-          / q[varlen - 1], vdp.second)) : T(0));
+          / q[varlen - 1], vdp.second)) : avg[avg.size() - 1]);
     sscore += abs(score);
   }
   return res * M / sscore;

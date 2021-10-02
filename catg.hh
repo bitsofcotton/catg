@@ -321,10 +321,11 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
           auto score(vdp.first.dot(avg) / T(cat[i].first.size()));
     const auto q(pw.rows() <= pw.cols() || ! pw.rows() ? Vec() : linearInvariant<T>(pw));
     work[work.size() - 1] = zero;
-    res += work[work.size() - 1] = score *
-      revertProgramInvariant<T>(make_pair(q.size() ?
+    res += work[work.size() - 1] = q.size() ? abs(score) *
+      revertProgramInvariant<T>(make_pair(
         - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1])
-        / q[varlen - 1] : avg[avg.size() - 1], vdp.second) );
+        / q[varlen - 1], vdp.second) ) :
+      score * revertProgramInvariant<T>(make_pair(avg[varlen - 1], vdp.second));
     sscore += abs(score);
   }
   return res * M / sscore;

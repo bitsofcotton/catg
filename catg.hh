@@ -303,7 +303,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     cache.emplace_back(d.subVector(i, varlen) / M);
     cache[cache.size() - 1][cache[cache.size() - 1].size() - 1] = d[i + varlen + step - 2] / M;
   }
-  const auto cat(crush<T>(cache, cache[0].size(), cache.size() / min(int(sqrt(T(int(cache.size())))), cache[0].size() * cache[0].size())));
+  const auto cat(crush<T>(cache, cache[0].size(), cache[0].size()));
   SimpleVector<T> work(varlen);
   for(int i = 1; i < work.size(); i ++)
     work[i - 1] = d[i - work.size() + d.size()] / M;
@@ -321,10 +321,10 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
           auto score(vdp.first.dot(avg) / T(cat[i].first.size()));
     const auto q(pw.rows() <= pw.cols() || ! pw.rows() ? Vec() : linearInvariant<T>(pw));
     work[work.size() - 1] = zero;
-    res += work[work.size() - 1] = score * (q.size()
-      ? revertProgramInvariant<T>(make_pair(
-          - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1])
-          / q[varlen - 1], vdp.second)) : avg[avg.size() - 1]);
+    res += work[work.size() - 1] = score *
+      revertProgramInvariant<T>(make_pair(q.size() ?
+        - (q.dot(vdp.first) - q[varlen - 1] * vdp.first[varlen - 1])
+        / q[varlen - 1] : avg[avg.size() - 1], vdp.second) );
     sscore += abs(score);
   }
   return res * M / sscore;

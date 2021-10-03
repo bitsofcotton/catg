@@ -61,8 +61,10 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static, 1)
 #endif
-  for(int i = 0; i < in.size(); i ++)
-    A.row(i) = makeProgramInvariant(tayl(size, in[i].size()) * in[i]).first;
+  for(int i = 0; i < in.size(); i ++) {
+    A.row(i).setVector(0, makeProgramInvariant(tayl(size, in[i].size()) * in[i]).first);
+    A(i, A.cols() - 1) = T(int(1));
+  }
         auto Pt(A.QR());
   const auto R(Pt * A);
         Vec  one(Pt.cols());
@@ -111,8 +113,9 @@ template <typename T> inline CatG<T>::CatG(const int& size0, const vector<Vec>& 
   cut = R.solve(Pt * one);
   std::vector<T> s;
   s.reserve(in.size());
-  for(int i = 0; i < in.size(); i ++)
-    s.emplace_back(makeProgramInvariant(tayl(size, in[i].size()) * in[i]).first.dot(cut));
+  assert(in.size() == A.rows());
+  for(int i = 0; i < A.rows(); i ++)
+    s.emplace_back(A.row(i).dot(cut));
   std::sort(s.begin(), s.end());
   distance = origin = T(int(0));
   for(int i = 0; i < s.size() - 1; i ++)
@@ -139,7 +142,10 @@ template <typename T> const typename CatG<T>::Mat& CatG<T>::tayl(const int& size
 template <typename T> inline T CatG<T>::score(const Vec& in) {
   const auto size(cut.size() - 2);
   assert(0 < size);
-  return makeProgramInvariant<T>(tayl(size, in.size()) * in).first.dot(cut) - origin;
+  SimpleVector<T> sv(cut.size());
+  sv.setVector(0, makeProgramInvariant<T>(tayl(size, in.size()) * in).first);
+  sv[sv.size() - 1] = T(int(1));
+  return sv.dot(cut) - origin;
 }
 
 
@@ -314,7 +320,7 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
   for(int i = 0; i < cat.size(); i ++) {
     // XXX: how to handle the illegal value.
     if(! cat[i].first.size()) continue;
-    Mat pw(cat[i].first.size(), cat[i].first[0].size() + 2);
+    Mat pw(cat[i].first.size(), cat[i].first[0].size() + 1);
     Vec avg(Vec(pw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
     for(int j = 1; j < pw.rows(); j ++)
       avg += (pw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first);

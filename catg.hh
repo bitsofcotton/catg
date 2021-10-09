@@ -324,7 +324,9 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
     Vec avg(Vec(pw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
     for(int j = 1; j < pw.rows(); j ++)
       avg += (pw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first);
-          auto score(vdp.first.dot(avg) / T(cat[i].first.size()));
+    T score(0);
+    for(int j = 0; j < work.size(); j ++)
+      score += work[j] * revertProgramInvariant<T>(make_pair(avg[j], vdp.second));
     const auto q(pw.rows() <= pw.cols() || ! pw.rows() ? Vec() : linearInvariant<T>(pw));
     work[work.size() - 1] = zero;
     res += work[work.size() - 1] = q.size() ? abs(score) *

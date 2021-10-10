@@ -318,12 +318,12 @@ template <typename T, typename feeder> inline T P012L<T,feeder>::next(const T& i
         auto res(zero);
         auto sscore(zero);
   for(int i = 0; i < cat.size(); i ++) {
-    // XXX: how to handle the illegal value.
     if(! cat[i].first.size()) continue;
     Mat pw(cat[i].first.size(), cat[i].first[0].size() + 1);
     Vec avg(Vec(pw.row(0) = makeProgramInvariant<T>(cat[i].first[0]).first));
     for(int j = 1; j < pw.rows(); j ++)
       avg += (pw.row(j) = makeProgramInvariant<T>(cat[i].first[j]).first);
+    avg /= T(int(pw.rows()));
     T score(0);
     for(int j = 0; j < work.size(); j ++)
       score += work[j] * revertProgramInvariant<T>(make_pair(avg[j], vdp.second));

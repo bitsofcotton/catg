@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <iomanip>
+#include <algorithm>
 #include <assert.h>
 
 #if defined(_FLOAT_BITS_)

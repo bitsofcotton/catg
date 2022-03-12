@@ -6,7 +6,7 @@ CXXFLAGS+=	-std=c++11
 #CXXFLAGS+=	-Ofast -mtune=native -gfull
 CXXFLAGS+=	-Oz -mtune=native -gfull
 #CXXFLAGS+=	-Ofast -mno-sse2 -mno-sse -mno-3dnow -mno-mmx -msoft-float -gfull
-LDFLAGS+=	-lc++
+LDFLAGS+=	-lc++ -static
 
 #CXXFLAGS+=	-D_FLOAT_BITS_=32
 #CXXFLAGS+=	-D_FLOAT_BITS_=64

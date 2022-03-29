@@ -54,7 +54,8 @@ int main(int argc, const char* argv[]) {
       auto avg(catg.tayl(abs(slen), cg[t].first[0].size()) * cg[t].first[0]);
       for(int j = 1; j < cg[t].first.size(); j ++)
         avg += catg.tayl(abs(slen), cg[t].first[j].size()) * cg[t].first[j];
-      std::cout << (avg / num_t(cg[t].first.size()));
+      // std::cout << (avg / num_t(cg[t].first.size()));
+      std::cout << (avg / sqrt(avg.dot(avg)));
     }
     for(int j = 0; j < cg[t].second.size(); j ++)
       std::cout << cg[t].second[j] << " ";

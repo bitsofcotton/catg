@@ -17,11 +17,15 @@ So this is another categorizer on vector series. (I didn't searched well, so mig
     ./catg <status dimension> <count> < data.txt
     # status dimension < 0 for pairwise divide left part.
     # count <  - 1 for each sorted divide.
-    # count == - 1 for each sorted divide, divide to last one.
-    # count == 0 for divide to last one.
+    # count == - 1 for each sorted divide, divide to sqrt(num).
+    # count == 0 for divide to sqrt(num).
 
 # Description
 We solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times on invariant of makeProgramInvariant.
+
+# Tips on XXX
+makeProgramInvariant optimization describes too wide region we think, so the categorization itself needs to be it's on some of the edge or not.
+To beat with them, we need to factor some vectors into known ones.
 
 # Tips (XXX)
 If there's a unnecessary mini block on crushed parts, we can try them with vanishing to 0 each mini block and concat some block and test them if causes large block can validated. This isn't implemented to this.

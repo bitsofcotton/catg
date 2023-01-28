@@ -27,6 +27,9 @@ We solve max_(n,t) min_k|A^t\*n+1\*t|\_k / ||\[n t\]|| multiple times on invaria
 makeProgramInvariant optimization describes too wide region we think, so the categorization itself needs to be it's on some of the edge or not.
 To beat with them, we need to factor some vectors into known ones.
 
+# Tips on XXX (2)
+We categorize by multiple of the meaning on input stream or by complexity of input calculation. So if input stream can be described by f(x) g(x) == 0, it's not separatable by this catg program. In such case, we need to separate by multiple of p1 copy structure then, we need simple NAND gate program factorization.
+
 # Tips (XXX)
 If there's a unnecessary mini block on crushed parts, we can try them with vanishing to 0 each mini block and concat some block and test them if causes large block can validated. This isn't implemented to this.
 

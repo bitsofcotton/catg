@@ -38,3 +38,6 @@ If there's a unnecessary mini block on crushed parts, we can try them with vanis
 * https://1drv.ms/u/s!AnqkwcwMjB_PaDIfXya_M3-aLXw?e=qzfKcU
 * https://ja.osdn.net/users/bitsofcotton/
 
+# Real close
+2023/03/13 try to real close.
+

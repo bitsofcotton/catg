@@ -14,7 +14,6 @@
 #endif
 #include "lieonn.hh"
 typedef myfloat num_t;
-#include "catg.hh"
 
 #if defined(_FLOAT_BITS_)
 #undef int

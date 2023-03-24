@@ -34,7 +34,6 @@ int main(int argc, const char* argv[]) {
   }
   std::cerr << "continue with catg " << slen << " " << count << std::endl;
   std::vector<num_t> v;
-  int t(0);
   while(std::getline(std::cin, s, '\n')) {
     std::stringstream ins(s);
     v.emplace_back(num_t(0));

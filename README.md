@@ -44,4 +44,5 @@ If there's a unnecessary mini block on crushed parts, we can try them with vanis
 2023/03/31 merge prand.
 2023/04/02 fix CatG::CatG score calculation.
 2023/04/03 merge.
+2023/04/05 fix makeProgramInvariant scale accuracy stability.
 

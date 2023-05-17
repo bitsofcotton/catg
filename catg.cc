@@ -24,12 +24,13 @@ int main(int argc, const char* argv[]) {
 #endif
   std::cout << std::setprecision(30);
   std::string s;
-  int  slen(8);
+  int  slen(6);
   int  count(0);
   if(argc < 2)
     std::cerr << "catg <status dimension>? <divide count>?" << std::endl;
   else {
     if(1 < argc) slen  = std::atoi(argv[1]);
+    slen = slen < 0 ? - min(int(6), - slen) : min(int(6), slen);
     if(2 < argc) count = std::atoi(argv[2]);
   }
   std::cerr << "continue with catg " << slen << " " << count << std::endl;

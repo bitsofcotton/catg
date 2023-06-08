@@ -30,7 +30,6 @@ int main(int argc, const char* argv[]) {
     std::cerr << "catg <status dimension>? <divide count>?" << std::endl;
   else {
     if(1 < argc) slen  = std::atoi(argv[1]);
-    slen = slen < 0 ? - min(int(6), - slen) : min(int(6), slen);
     if(2 < argc) count = std::atoi(argv[2]);
   }
   std::cerr << "continue with catg " << slen << " " << count << std::endl;

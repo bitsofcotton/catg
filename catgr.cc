@@ -42,7 +42,7 @@ int main(int argc, const char* argv[]) {
     if(! (t % buf.size()) )
       v.emplace_back(SimpleVector<num_t>(buf));
   }
-  auto cg(crush<num_t>(v, slen, count));
+  auto cg(crush<num_t>(v, slen, count ? count : v.size()));
   std::cout << cg.size() << "pairs." << std::endl;
   CatG<num_t> catg;
   for(int t = 0; t < cg.size(); t ++) {

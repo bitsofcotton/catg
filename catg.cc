@@ -39,7 +39,7 @@ int main(int argc, const char* argv[]) {
     v.emplace_back(num_t(0));
     ins >> v[v.size() - 1];
   }
-  auto cg(crushWithOrder<num_t>(v, slen, count));
+  auto cg(crushWithOrder<num_t>(v, slen, count ? count : v.size() * v.size() * v.size()));
   std::cout << cg.size() << "pairs." << std::endl;
   CatG<num_t> catg;
   for(int t = 0; t < cg.size(); t ++) {

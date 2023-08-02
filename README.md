@@ -46,4 +46,5 @@ If there's a unnecessary mini block on crushed parts, we can try them with vanis
 2023/04/03 merge.
 2023/04/05 fix makeProgramInvariant scale accuracy stability.
 2023/04/21 shapeup around make/revert ProgramInvariant, algorthm changed.
+2023/08/02 crush to the last.
 
